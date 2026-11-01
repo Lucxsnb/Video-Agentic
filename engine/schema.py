@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Literal, Optional
+from typing import Any, Literal, Optional, Union
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -15,7 +15,24 @@ class _Model(BaseModel):
 class Series(_Model):
     name: str
     episode: Optional[int] = None
-    show_timer: bool = False
+    badge: bool = True                   # series name + episode in the top-left corner
+    clock: Optional[str] = None          # in-story clock under the badge, e.g. "18:30" (scenes/shots can change it)
+    show_timer: bool = False             # if no clock: running mm:ss timer instead
+
+
+class Card(_Model):
+    """Centered text card over the scene (e.g. a rule, a warning, a fact)."""
+    title: Optional[str] = None          # small pill, e.g. "RULE #9"
+    text: str
+    highlight: list[str] = Field(default_factory=list)
+    color: Optional[str] = None          # pill color
+    at: float = 0.0                      # seconds after shot start
+    y: float = 0.22                      # vertical center (fraction of height)
+
+
+class PollOption(_Model):
+    text: str
+    detail: Optional[str] = None         # small line under the option
 
 
 class Look(_Model):
@@ -37,6 +54,8 @@ class Character(_Model):
     gender: Optional[Literal["male", "female"]] = None
     look: Look = Field(default_factory=Look)
     library: Optional[str] = None        # reuse library/characters/<name>.json
+    rig: Optional[str] = None            # body variant (config/rigs/<name>.yaml); default from style
+    tag_color: Optional[str] = None      # speaker tag pill color
 
 
 class Camera(_Model):
@@ -132,6 +151,11 @@ class Shot(_Model):
     blur: Optional[float] = None         # background blur (depth of field), px
     lighting: Optional[Lighting] = None  # overrides scene lighting
     caption_y: Optional[float] = None    # move captions for this shot (e.g. off a sign or face)
+    background_params: dict[str, Any] = Field(default_factory=dict)  # fill {{placeholders}} of an SVG set
+    clock: Optional[str] = None          # change the story clock from this shot on
+    card: Optional[Card] = None
+    poll: list[int] = Field(default_factory=list)  # ending poll options (1-based) shown during this shot
+    overlays: bool = True                # False hides badge/clock (full-screen inserts)
 
 
 class Scene(_Model):
@@ -139,15 +163,26 @@ class Scene(_Model):
     background: str = "plain"
     blur: Optional[float] = None
     lighting: Optional[Lighting] = None
+    clock: Optional[str] = None
+    background_params: dict[str, Any] = Field(default_factory=dict)
     shots: list[Shot]
 
 
 class Ending(_Model):
+    """End card. poll: 'THE MAJORITY DECIDES / <badge> / <cta>' + numbered options.
+    cliffhanger / cta: headline + badge + cta only."""
     type: Literal["poll", "cliffhanger", "cta", "none"] = "none"
-    question: Optional[str] = None
-    options: list[str] = Field(default_factory=list)
+    question: Optional[str] = None       # kept for post text / narration
+    options: list[Union[str, PollOption]] = Field(default_factory=list)
+    headline: Optional[str] = None       # default: "THE MAJORITY DECIDES" for polls
+    badge: Optional[str] = None          # big pill, e.g. "DAY 14" / "NEXT EPISODE"
+    cta: Optional[str] = None            # e.g. "COMMENT 1 OR 2"
     text: Optional[str] = None
-    duration: float = 3.0
+    line: Optional[Line] = None          # narration over the end card
+    duration: float = 3.0                # minimum length of the end card
+
+    def option_list(self) -> list[PollOption]:
+        return [o if isinstance(o, PollOption) else PollOption(text=o) for o in self.options]
 
 
 class Music(_Model):

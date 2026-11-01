@@ -48,6 +48,14 @@ caption:
   lead: 0.03               # show word slightly before it is spoken (s)
   active_scale: 1.06       # word being spoken right now
   hold_after: 0.35         # keep the last page on screen after speech (s)
+  dialogue_font: library/fonts/Montserrat-ExtraBoldItalic.ttf   # character lines (narration stays upright)
+  tag:                     # speaker pill above character lines
+    enabled: true
+    font: library/fonts/Montserrat-Black.ttf
+    size: 0.36             # x caption size
+    gap: 0.25
+    text_color: "#FFFFFF"
+    colors: ["#2F6FD6", "#E07B24", "#2E9B57", "#B8322E", "#7A4FD0", "#D14A8B"]   # assigned per character
 
 grain:
   enabled: true
@@ -79,6 +87,9 @@ tts:
   pitch: "+0Hz"
   align: auto                       # auto | edge | whisper | estimate
 
+character:
+  rig: default             # body variant: default | tall (config/rigs/)
+
 background:
   render_scale: 1.5        # backgrounds rendered larger than the frame for sharper close-ups
   blur: 0                  # default depth-of-field blur (px); scenes/shots can override
@@ -103,3 +114,40 @@ lighting:
   glow: "#FFE7A8"          # warm light tint
   glow_alpha: 0.30
   edge_blur: 18            # px softness of light edges
+
+overlays:
+  badge:                   # top-left series label + story clock
+    x: 0.065
+    y: 0.075
+    font: library/fonts/Montserrat-Black.ttf
+    label_size: 30
+    clock_size: 84
+    clock_color: "#FFFFFF"
+  card:                    # centered text card (rules, warnings)
+    width: 0.80
+    padding: 44
+    size: 64
+    title_size: 38
+    bg: "#121418"
+    bg_alpha: 0.93
+    title_bg: "#D93A3A"
+  poll:                    # numbered option bars
+    width: 0.84
+    height: 128
+    gap: 22
+    bottom: 0.905          # bottom edge of the last bar (fraction of height)
+    size: 44
+    detail_size: 29
+    bg: "#F6F3EC"
+    text_color: "#1d1d22"
+    detail_color: "#6B6258"
+  end:                     # end card
+    y: 0.22
+    headline_size: 74
+    badge_size: 92
+    cta_size: 40
+
+ending:                    # end card background (last set, blurred and darkened)
+  blur: 14
+  darkness: 0.55
+  caption_y: 0.62

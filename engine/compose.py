@@ -12,7 +12,7 @@ from . import audio_mix, tts
 from .characters import resolve_character
 from .config import load_style, load_voices
 from .renderer import FrameRenderer
-from .schema import Scene, Screenplay, Shot, load_screenplay
+from .schema import Lighting, Scene, Screenplay, Shot, load_screenplay
 
 
 @dataclass
@@ -30,6 +30,14 @@ class ShotTiming:
     highlight: list[str] = field(default_factory=list)
     speaker: str | None = None
     scene: Scene | None = None
+    clock: str | None = None             # in-story clock shown in the badge
+    is_ending: bool = False
+
+    @property
+    def background_params(self) -> dict:
+        base = dict(self.scene.background_params) if self.scene else {}
+        base.update(self.shot.background_params)
+        return base
 
     @property
     def duration(self) -> float:
@@ -55,33 +63,52 @@ def build_timeline(sp: Screenplay, project_dir: Path, style: dict, voices_cfg: d
     shots: list[ShotTiming] = []
     t = 0.0
     used_backends = set()
+    clock = sp.series.clock if sp.series else None
+
+    def timed(scene, i, shot, start, label) -> ShotTiming:
+        st = ShotTiming(scene.id, i, shot, shot.background or scene.background, start, start, scene=scene)
+        dur = shot.duration or 0.0
+        if shot.line:
+            ln = shot.line
+            char = sp.character(ln.speaker)
+            voice = tts.resolve_voice(ln.voice or (char.voice if char else None),
+                                      char.gender if char else None, voices_cfg,
+                                      role="narrator" if ln.speaker == "narrator" else "character")
+            sp_ = tts.synthesize(ln.text, voice, cache, style, voices_cfg, backends, ln.rate, ln.pitch)
+            used_backends.add(sp_.backend)
+            st.voice_wav = sp_.wav
+            st.voice_start = start + tm["pre_roll"]
+            st.words = [(w.text, st.voice_start + w.start, st.voice_start + w.end) for w in sp_.words]
+            st.line_end = st.words[-1][2] if st.words else st.voice_start + sp_.duration
+            st.highlight = ln.highlight
+            st.speaker = ln.speaker
+            dur = max(dur, tm["pre_roll"] + sp_.duration + tm["breath_after"])
+            log(f"  [{label}] {sp_.backend}:{voice}  {sp_.duration:.2f}s  \"{ln.text}\"")
+        if dur <= 0:
+            dur = tm["default_shot"]
+        st.end = start + max(dur, tm["min_shot"])
+        return st
+
     for scene in sp.scenes:
+        clock = scene.clock or clock
         for i, shot in enumerate(scene.shots):
-            st = ShotTiming(scene.id, i, shot, shot.background or scene.background, t, t, scene=scene)
-            dur = shot.duration or 0.0
-            if shot.line:
-                ln = shot.line
-                char = sp.character(ln.speaker)
-                voice = tts.resolve_voice(ln.voice or (char.voice if char else None),
-                                          char.gender if char else None, voices_cfg,
-                                          role="narrator" if ln.speaker == "narrator" else "character")
-                sp_ = tts.synthesize(ln.text, voice, cache, style, voices_cfg, backends, ln.rate, ln.pitch)
-                used_backends.add(sp_.backend)
-                st.voice_wav = sp_.wav
-                st.voice_start = t + tm["pre_roll"]
-                st.words = [(w.text, st.voice_start + w.start, st.voice_start + w.end) for w in sp_.words]
-                st.line_end = st.words[-1][2] if st.words else st.voice_start + sp_.duration
-                st.highlight = ln.highlight
-                st.speaker = ln.speaker
-                speech_len = tm["pre_roll"] + sp_.duration + tm["breath_after"]
-                dur = max(dur, speech_len)
-                log(f"  [{scene.id}/{i + 1}] {sp_.backend}:{voice}  {sp_.duration:.2f}s  \"{ln.text}\"")
-            if dur <= 0:
-                dur = tm["default_shot"]
-            dur = max(dur, tm["min_shot"])
-            st.end = t + dur
+            clock = shot.clock or clock
+            st = timed(scene, i, shot, t, f"{scene.id}/{i + 1}")
+            st.clock = clock
             shots.append(st)
             t = st.end
+
+    end = sp.ending
+    if end.type != "none" and shots:
+        last = shots[-1]
+        ecfg = style.get("ending", {})
+        eshot = Shot(line=end.line, duration=end.duration, background=last.background,
+                     blur=ecfg.get("blur", 14), lighting=Lighting(darkness=ecfg.get("darkness", 0.55)),
+                     background_params=last.background_params, caption_y=ecfg.get("caption_y"))
+        st = timed(last.scene, len(last.scene.shots), eshot, t, "ending")
+        st.clock, st.is_ending = clock, True
+        shots.append(st)
+        t = st.end
     if "edge" not in used_backends and used_backends:
         log(f"  ! Using fallback TTS ({', '.join(sorted(used_backends))}); quality is lower than edge-tts.")
     return Timeline(shots, t)
@@ -139,7 +166,7 @@ def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds
     mix_wav = normalize_audio(mix_wav, project_dir / "audio" / "mix_norm.wav", style)
 
     log("3/3 Render video")
-    r = FrameRenderer(tl, style, project_dir, sp.characters)
+    r = FrameRenderer(tl, style, project_dir, sp.characters, sp)
     final = r.render(mix_wav, out_dir / "final.mp4", None, max_seconds, workers)
     (out_dir / "captions.srt").write_text(r.captions.to_srt(), encoding="utf-8")
     (out_dir / "timeline.json").write_text(json.dumps({

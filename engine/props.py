@@ -51,6 +51,18 @@ def _pair(s: str | None, default: tuple[float, float] | None) -> tuple[float, fl
     return float(a), float(b)
 
 
+def fill_template(svg: str, params: dict) -> str:
+    """Replace {{key}} / {{key|default}} placeholders (values XML-escaped, colors as-is)."""
+    params = {k: str(v) for k, v in (params or {}).items()}
+
+    def sub(mt):
+        k, d = mt.group(1), mt.group(2)
+        v = params.get(k, d if d is not None else "")
+        return v if v.startswith("#") else escape(v)
+
+    return PH.sub(sub, svg)
+
+
 class PropLibrary:
     def __init__(self, style: dict, project_dir: Path | None = None):
         ensure_fonts()

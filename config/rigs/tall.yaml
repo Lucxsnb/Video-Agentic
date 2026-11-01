@@ -1,0 +1,50 @@
+# "tall" body variant: taller figure, long thin limbs, narrow torso, smaller head and dot-like eyes.
+# Deep-merged over config/rig.yaml. Select with style `character.rig: tall` (preset) or a
+# character's own "rig": "tall".
+height: 0.50
+leg:
+  hip_y: -0.40
+  hip_dx: 0.052
+  thigh: 0.205
+  shin: 0.195
+  thickness: 0.058
+foot:
+  w: 0.085
+  h: 0.04
+torso:
+  top_y: -0.70
+  bottom_y: -0.355
+  w: 0.205
+  radius: 0.05
+  pants_h: 0.05
+arm:
+  shoulder_y: -0.678
+  shoulder_dx: 0.098
+  upper: 0.19
+  lower: 0.18
+  thickness: 0.052
+  hand_r: 0.031
+head:
+  r: 0.14
+  cy: -0.815
+  ear_r: 0.03
+  eye_dx: 0.36
+  eye_y: -0.04
+  eye_r: 0.15
+  pupil_r: 0.095
+  brow_y: -0.33
+  brow_len: 0.28
+  brow_w: 0.075
+  mouth_y: 0.42
+  mouth_w: 0.34
+ground_shadow:
+  w: 0.32
+  h: 0.045
+talk:
+  head_bob: 0.004
+# Pose angles that need different values for the longer arms (merged over config/poses.yaml).
+pose_overrides:
+  phone_ear: {arm_r: [100, -225]}
+  hold: {arm_r: [22, -118]}
+  hold_both: {arm_l: [24, -116], arm_r: [24, -116]}
+  cross_arms: {arm_l: [18, -130], arm_r: [18, -130]}

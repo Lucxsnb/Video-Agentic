@@ -1,0 +1,55 @@
+{
+  "title": "Phase 4 overlays test",
+  "series": {"name": "Zombie Outbreak", "episode": 13, "clock": "18:30"},
+  "style_preset": "dark_miniseries",
+  "characters": [
+    {"id": "courier", "library": "delivery_guy"},
+    {"id": "manager", "library": "store_manager"}
+  ],
+  "scenes": [
+    {
+      "id": "phone",
+      "background": "phone_lockscreen",
+      "background_params": {"time": "18:31", "date": "Friday, October 30", "battery": "4%"},
+      "clock": "18:31",
+      "blur": 0,
+      "shots": [
+        {"overlays": false, "camera": {"type": "zoom_in", "from": 1.0, "to": 1.08},
+         "props": [{"svg": "notification", "x": 0.5, "y": 0.4, "anim": "pop",
+                    "params": {"title": "Mom", "text": "You're taking too long. I'm coming to the store."}}],
+         "line": {"text": "Then his mom texts him.", "highlight": ["mom"]},
+         "transition_out": "whip"}
+      ]
+    },
+    {
+      "id": "aisle",
+      "background": "supermarket_aisle",
+      "shots": [
+        {"camera": {"type": "static", "from": 1.35, "target": "courier.head"},
+         "actors": [{"id": "courier", "x": 0.4, "y": 0.92, "pose": "hold", "expression": "scared", "facing": "right"}],
+         "props": [{"svg": "phone", "attach_to": "courier.hand_r"}],
+         "line": {"speaker": "courier", "text": "She can't come here!", "highlight": ["can't"]}},
+        {"camera": {"type": "static", "from": 1.35, "target": "manager.head"},
+         "actors": [{"id": "manager", "x": 0.6, "y": 0.92, "pose": "cross_arms", "expression": "determined", "facing": "left"}],
+         "line": {"speaker": "manager", "text": "Then remember rule number nine.", "highlight": ["nine"]},
+         "card": {"title": "Rule #9", "text": "Never open the doors after dark", "highlight": ["never"], "at": 0.6},
+         "transition_out": "flash"},
+        {"clock": "18:44",
+         "camera": {"type": "zoom_in", "from": 1.0, "to": 1.15},
+         "actors": [{"id": "courier", "x": 0.24, "y": 0.86, "pose": "nervous", "expression": "worried", "facing": "right"},
+                    {"id": "manager", "x": 0.8, "y": 0.86, "pose": "point", "expression": "angry", "facing": "left", "flip": true}],
+         "line": {"text": "Option one: he calls her back.", "highlight": ["one"]},
+         "poll": [1]},
+        {"camera": {"type": "zoom_in", "from": 1.15, "to": 1.25},
+         "actors": [{"id": "courier", "x": 0.3, "y": 0.86, "pose": "shrug", "expression": "nervous", "facing": "right"},
+                    {"id": "manager", "x": 0.7, "y": 0.86, "pose": "idle", "expression": "suspicious", "facing": "left"}],
+         "line": {"text": "Option two: he lets her come.", "highlight": ["two"]},
+         "poll": [1, 2]}
+      ]
+    }
+  ],
+  "ending": {"type": "poll", "badge": "Day 14", "cta": "Comment 1 or 2",
+             "options": [{"text": "Call her back", "detail": "and lie to his mom"},
+                         {"text": "Let her come", "detail": "the doors stay closed"}],
+             "line": {"text": "The majority decides.", "highlight": ["majority"]}, "duration": 2.5}
+}

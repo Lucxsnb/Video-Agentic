@@ -17,6 +17,7 @@ from .camera import camera_matrix, camera_zoom, resolve_target
 from .captions import CaptionTrack
 from .characters import CharacterRenderer, load_rig
 from .lighting import LightingRenderer
+from .overlays import OverlayRenderer
 from .poses import PoseLibrary
 from .props import PropLibrary, prop_motion
 from .transitions import active_transition, draw_transition
@@ -44,12 +45,26 @@ def mouth_envelope(wav: Path, fps: int, rig: dict) -> np.ndarray:
     return out
 
 
+def speaker_tags(characters, style: dict) -> dict[str, tuple[str, str]]:
+    """character id -> (label, pill color); colors cycle through caption.tag.colors."""
+    tg = style["caption"].get("tag", {})
+    if not tg.get("enabled", True):
+        return {}
+    cols = tg.get("colors", ["#2F6FD6"])
+    out = {}
+    for i, ch in enumerate(characters):
+        label = ch.label or ch.id.replace("_", " ").upper()
+        out[ch.id] = (label, ch.tag_color or cols[i % len(cols)])
+    return out
+
+
 class FrameRenderer:
     """Per frame: record the world (bg, props, actors, light) into a skia Picture while collecting
     anchors -> apply the camera -> blend transitions -> screen-space vignette, grain, captions."""
 
-    def __init__(self, timeline, style: dict, project_dir: Path, characters=None):
+    def __init__(self, timeline, style: dict, project_dir: Path, characters=None, screenplay=None):
         self.tl = timeline
+        self._screenplay = screenplay
         self.style = style
         self._characters = characters
         v = style["video"]
@@ -58,11 +73,14 @@ class FrameRenderer:
         self.atmo = Atmosphere(style, self.W, self.H)
         self._bg_cache: dict[tuple, skia.Image] = {}
         self.captions = CaptionTrack(style, self.W, self.H)
+        tags = speaker_tags(characters or [], style)
         for sh in timeline.shots:
             if sh.words:
-                self.captions.add_line(sh.words, sh.highlight, sh.line_end, sh.end, sh.shot.caption_y)
-        self.rig = load_rig()
-        self.poses = PoseLibrary()
+                is_char = bool(sh.speaker) and sh.speaker != "narrator"
+                self.captions.add_line(sh.words, sh.highlight, sh.line_end, sh.end, sh.shot.caption_y,
+                                       italic=is_char, tag=tags.get(sh.speaker))
+        self.rig = load_rig(style.get("character", {}).get("rig"))
+        self.poses = PoseLibrary(self.rig.get("pose_overrides"))
         self.props = PropLibrary(style, project_dir)
         self.chars = {c.id: CharacterRenderer(c, style, self.rig) for c in (characters or [])}
         self._index = {id(sh): i for i, sh in enumerate(timeline.shots)}
@@ -73,15 +91,16 @@ class FrameRenderer:
         self.anchors: dict[str, dict] = {}
         self._off = [skia.Surface(self.W, self.H), skia.Surface(self.W, self.H)]
         self.lights = LightingRenderer(self.W, self.H, style)
+        self.overlays = OverlayRenderer(screenplay, timeline, style) if screenplay else None
 
     # ------------------------------------------------------------------ assets
-    def background(self, name: str, blur: float, hires: bool) -> skia.Image:
+    def background(self, name: str, blur: float, hires: bool, params: dict | None = None) -> skia.Image:
         """1x image for wide shots (fast blit), render_scale image for close-ups (sharp)."""
         scale = self.style.get("background", {}).get("render_scale", 1.5) if hires else 1.0
-        key = (name, round(blur, 2), scale)
+        key = (name, round(blur, 2), scale, tuple(sorted((params or {}).items())))
         if key not in self._bg_cache:
             spec = find_background(name, self.project_dir)
-            self._bg_cache[key] = background_image(spec, self.W, self.H, scale, blur).makeRasterImage()
+            self._bg_cache[key] = background_image(spec, self.W, self.H, scale, blur, params).makeRasterImage()
         return self._bg_cache[key]
 
     def shot_blur(self, shot) -> float:
@@ -159,7 +178,7 @@ class FrameRenderer:
         rec = skia.PictureRecorder()
         c = rec.beginRecording(skia.Rect.MakeWH(self.W, self.H))
         zoom = camera_zoom(shot.shot.camera, max(0.0, t - shot.start), shot.duration)
-        bg = self.background(shot.background, self.shot_blur(shot), zoom > 1.2)
+        bg = self.background(shot.background, self.shot_blur(shot), zoom > 1.2, shot.background_params)
         c.drawImageRect(bg, skia.Rect.MakeWH(self.W, self.H), skia.SamplingOptions(skia.FilterMode.kLinear))
         anchors: dict = {}
         local = t - shot.start
@@ -199,8 +218,9 @@ class FrameRenderer:
             self.draw_scene(canvas, self.tl.shot_at(t), t)
         self.atmo.draw_vignette(canvas)
         self.atmo.draw_grain(canvas, t)
+        if self.overlays:
+            self.overlays.draw(canvas, self.tl.shot_at(t), t)
         self.captions.draw(canvas, t)
-        # Phase 4: overlays
 
     def frame(self, t: float) -> np.ndarray:
         arr = np.zeros((self.H, self.W, 4), dtype=np.uint8)
@@ -272,7 +292,7 @@ class FrameRenderer:
         tmp = out_path.parent / ".segments"
         tmp.mkdir(parents=True, exist_ok=True)
         bounds = [round(n * k / workers) for k in range(workers + 1)]
-        jobs = [(self.tl, self.style, self.project_dir, self._characters, bounds[k], bounds[k + 1],
+        jobs = [(self.tl, self.style, self.project_dir, self._characters, self._screenplay, bounds[k], bounds[k + 1],
                  tmp / f"seg{k:02d}.mp4") for k in range(workers)]
         t0 = time.time()
         print(f"  rendering {n} frames in {workers} processes...", file=sys.stderr)
@@ -300,6 +320,6 @@ class FrameRenderer:
 
 
 def _render_segment(job) -> Path:
-    tl, style, project_dir, characters, a, b, out = job
-    r = FrameRenderer(tl, style, project_dir, characters)
+    tl, style, project_dir, characters, screenplay, a, b, out = job
+    r = FrameRenderer(tl, style, project_dir, characters, screenplay)
     return r.render_frames(a, b, out, progress=False)

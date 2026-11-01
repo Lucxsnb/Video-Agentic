@@ -70,9 +70,18 @@ def direction(side: int, deg: float) -> tuple[float, float]:
     return side * math.sin(a), math.cos(a)
 
 
-def load_rig() -> dict:
+def load_rig(variant: str | None = None) -> dict:
+    """Base rig (config/rig.yaml), optionally deep-merged with config/rigs/<variant>.yaml."""
+    from .config import deep_merge
     with open(CONFIG_DIR / "rig.yaml", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        rig = yaml.safe_load(f)
+    if variant and variant != "default":
+        p = CONFIG_DIR / "rigs" / f"{variant}.yaml"
+        if not p.exists():
+            raise FileNotFoundError(f"Rig variant not found: {p}")
+        with open(p, encoding="utf-8") as f:
+            rig = deep_merge(rig, yaml.safe_load(f) or {})
+    return rig
 
 
 def resolve_character(char: Character, project_dir: Path | None = None) -> Character:
@@ -125,7 +134,7 @@ class CharacterRenderer:
 
     def __init__(self, char: Character, style: dict, rig: dict | None = None):
         self.char = char
-        self.rig = rig or load_rig()
+        self.rig = load_rig(char.rig) if char.rig else (rig or load_rig())
         self.look = char.look
         self.outline_hex = style["palette"]["outline"]
         self.outline_px = style.get("outline_width", 8) * self.rig.get("outline_scale", 1.0)

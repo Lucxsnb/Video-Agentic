@@ -25,11 +25,14 @@ app = typer.Typer(add_completion=False)
 def main(characters: list[str] = typer.Argument(..., help="library character names"),
          out: Path = typer.Option(Path("character_sheet.png")),
          mode: str = typer.Option("poses", help="poses | expressions"),
-         t: float = typer.Option(0.6, help="time inside the pose (s)")):
+         t: float = typer.Option(0.6, help="time inside the pose (s)"),
+         rig: str = typer.Option("default", help="body variant: default | tall")):
     style = load_style("miniseries")
-    lib = PoseLibrary()
+    from engine.characters import load_rig
+    rig_cfg = load_rig(rig)
+    lib = PoseLibrary(rig_cfg.get("pose_overrides"))
     items = lib.names() if mode == "poses" else list(lib.expressions)
-    cell_w, cell_h = 360, 520
+    cell_w, cell_h = 360, 620
     cols = len(items)
     W, H = cell_w * cols, cell_h * len(characters)
     surf = skia.Surface(W, H)
@@ -38,7 +41,7 @@ def main(characters: list[str] = typer.Argument(..., help="library character nam
     font = skia.Font(skia.Typeface.MakeFromFile("library/fonts/Montserrat-Bold.ttf"), 26)
     for row, name in enumerate(characters):
         ch = resolve_character(Character(id=name, library=name))
-        r = CharacterRenderer(ch, style)
+        r = CharacterRenderer(ch, style, rig_cfg)
         for i, item in enumerate(items):
             pose = lib.pose(item if mode == "poses" else "idle", t)
             expr = lib.expression(item if mode == "expressions" else "neutral")

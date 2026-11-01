@@ -65,8 +65,10 @@ class Expression:
 
 
 class PoseLibrary:
-    def __init__(self):
-        self.poses = _load("poses.yaml")
+    def __init__(self, overrides: dict | None = None):
+        """overrides: per-pose values from a rig variant (rig['pose_overrides'])."""
+        from .config import deep_merge
+        self.poses = deep_merge(_load("poses.yaml"), overrides or {})
         self.expressions = _load("expressions.yaml")
 
     def names(self) -> list[str]:

@@ -42,14 +42,16 @@ def find_background(name: str, project_dir: Path | None = None) -> dict:
     return PLAIN
 
 
-def background_image(spec: dict, w: int, h: int, scale: float = 1.0, blur: float = 0.0) -> skia.Image:
+def background_image(spec: dict, w: int, h: int, scale: float = 1.0, blur: float = 0.0,
+                     params: dict | None = None) -> skia.Image:
     """Render a background at `scale` x frame size (extra pixels for camera close-ups), optionally blurred
     (depth of field; `blur` is in frame pixels)."""
     if "svg" in spec:
         from .fonts import ensure_fonts
-        from .props import rasterize
+        from .props import fill_template, rasterize
         ensure_fonts()
-        img = rasterize(Path(spec["svg"]).read_text(encoding="utf-8"), int(h * scale), int(w * scale))
+        svg = fill_template(Path(spec["svg"]).read_text(encoding="utf-8"), params or {})
+        img = rasterize(svg, int(h * scale), int(w * scale))
     else:
         img = render_background(spec, w, h, scale)
     if blur > 0:

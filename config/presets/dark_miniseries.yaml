@@ -12,3 +12,5 @@ caption:
   center_y: 0.64
   stroke_width: 13
   max_words_per_page: 3
+character:
+  rig: tall

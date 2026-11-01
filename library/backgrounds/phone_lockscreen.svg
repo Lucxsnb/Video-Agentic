@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <!-- Full-screen phone lock screen insert. Params: time, date, battery, carrier, wallpaper, wallpaper2 -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B0E16"/><stop offset="1" stop-color="#151A26"/></linearGradient>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{{wallpaper|#1B2D52}}"/><stop offset="1" stop-color="{{wallpaper2|#0E1730}}"/></linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.25" r="0.6"><stop offset="0" stop-color="#3D5A99" stop-opacity="0.55"/><stop offset="1" stop-color="#3D5A99" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+  <rect x="70" y="60" width="940" height="1900" rx="120" fill="#1A1C22" stroke="#1d1d22" stroke-width="12"/>
+  <rect x="96" y="86" width="888" height="1860" rx="98" fill="url(#wall)"/>
+  <rect x="96" y="86" width="888" height="1860" rx="98" fill="url(#glow)"/>
+  <rect x="420" y="112" width="240" height="56" rx="28" fill="#05060A"/>
+  <text x="170" y="158" font-family="Montserrat" font-weight="700" font-size="30" fill="#E8ECF5">{{carrier|}}</text>
+  <text x="900" y="158" font-family="Montserrat" font-weight="700" font-size="28" fill="{{battery_color|#FF5A4F}}" text-anchor="end">{{battery|9%}}</text>
+  <rect x="760" y="134" width="40" height="22" rx="5" fill="none" stroke="#E8ECF5" stroke-width="3"/>
+  <rect x="764" y="138" width="8" height="14" rx="2" fill="{{battery_color|#FF5A4F}}"/>
+  <text x="540" y="300" font-family="Montserrat" font-weight="700" font-size="40" fill="#C9D3E8" text-anchor="middle">{{date|Friday, October 30}}</text>
+  <text x="540" y="520" font-family="Montserrat" font-weight="700" font-size="230" fill="#F2F5FB" text-anchor="middle">{{time|18:30}}</text>
+  <rect x="440" y="1880" width="200" height="10" rx="5" fill="#E8ECF5" opacity="0.8"/>
+  <circle cx="230" cy="1760" r="62" fill="#000" opacity="0.35"/>
+  <circle cx="850" cy="1760" r="62" fill="#000" opacity="0.35"/>
+  <rect x="212" y="1730" width="36" height="60" rx="8" fill="none" stroke="#E8ECF5" stroke-width="5"/>
+  <rect x="826" y="1740" width="48" height="38" rx="8" fill="none" stroke="#E8ECF5" stroke-width="5"/>
+  <circle cx="850" cy="1759" r="10" fill="none" stroke="#E8ECF5" stroke-width="5"/>
+</svg>
