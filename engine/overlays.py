@@ -60,6 +60,7 @@ class OverlayRenderer:
         self.pal = style["palette"]
         self.O = _col(self.pal["outline"])
         self.options = sp.ending.option_list()
+        self.boxes: list[tuple[str, tuple[float, float, float, float]]] = []   # last frame's overlay rects
         # when each poll option first appears (for the slide-in animation)
         self.poll_start: dict[int, float] = {}
         for sh in timeline.shots:
@@ -92,6 +93,8 @@ class OverlayRenderer:
         if not s or not s.badge or not shot.shot.overlays:
             return
         x, y = b.get("x", 0.065) * self.W, b.get("y", 0.07) * self.H
+        self.boxes.append(("series badge", (x, y - b.get("label_size", 30), x + self.W * 0.42,
+                                            y + b.get("clock_size", 84) * 1.1)))
         small = _font(b.get("font", "library/fonts/Montserrat-Black.ttf"), b.get("label_size", 30))
         label = s.name.upper() + (f" · EP {s.episode}" if s.episode is not None else "")
         self._text(c, label, x, y, small, b.get("label_color", self.pal["highlight"]), stroke=6)
@@ -122,6 +125,7 @@ class OverlayRenderer:
         th = title_f.getSize() * 1.7 if card.title else 0
         h = pad * 2 + th + (pad * 0.5 if card.title else 0) + lh * len(lines)
         cx, cy = self.W / 2, card.y * self.H
+        self.boxes.append(("card", (cx - maxw / 2, cy - h / 2, cx + maxw / 2, cy + h / 2)))
         s = 0.7 + 0.3 * _ease_back(cfg_k)
         c.save()
         c.translate(cx, cy)
@@ -179,6 +183,7 @@ class OverlayRenderer:
             x = (self.W - bw) / 2 - (1 - _ease_back(k, 1.3)) * self.W * 1.1
             y = y0 + (i - 1) * (bh + gap)
             is_active = i == active and not shot.is_ending
+            self.boxes.append((f"poll option {i}", ((self.W - bw) / 2, y, (self.W + bw) / 2, y + bh)))
             r = skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x, y, bw, bh), 22, 22)
             c.drawRRect(r.makeOffset(0, 8), skia.Paint(AntiAlias=True, Color=_col("#000000", 0.35)))
             bg = pc.get("active_bg", self.pal["highlight"]) if is_active else pc.get("bg", "#F6F3EC")
@@ -237,6 +242,7 @@ class OverlayRenderer:
 
     # ------------------------------------------------------------------ all
     def draw(self, c: skia.Canvas, shot, t: float) -> None:
+        self.boxes = []
         self.draw_badge(c, shot, t)
         self.draw_card(c, shot, t)
         self.draw_end(c, shot, t)

@@ -11,8 +11,18 @@ Turns a story or prompt (any language) into a finished **vertical English video*
 | 3 | SVG props/sets, camera, lighting, transitions, parallel render | ✅ |
 | 4 | Overlays (series badge + story clock, speaker tags, cards, poll, end card), tall body variant | ✅ |
 | 5 | Procedural SFX (auto + manual), procedural/own music with ducking, stems | ✅ |
-| 6 | Agent: CLAUDE.md, slash commands, preview/validate | ⏳ |
+| 6 | Agent: CLAUDE.md, slash commands, validate, preview + auto composition checks, output check, post.txt | ✅ |
 | 7 | End-to-end test | ⏳ |
+
+## Using the agent (Claude Code)
+
+Open this folder in Claude Code and use:
+
+- `/new-video <story file or text>` — full pipeline: script in English → screenplay → assets → validate → preview (Claude looks at the frames) → render → final check → report.
+- `/revise <project> <what to change>` — edits only what's needed and re-renders.
+- `/next-episode <project> <winning poll option>` — next episode of a series, keeping continuity (`series/<slug>/bible.md`).
+
+`CLAUDE.md` holds the permanent instructions (workflow, script rules, shot cookbook, composition rules, asset conventions).
 
 ## Setup
 
@@ -31,7 +41,11 @@ pip install -r requirements.txt
 ## Usage
 
 ```bash
-python scripts/make_video.py projects/phase1-test
+python scripts/new_project.py story.md --slug my-video          # or --series zombie-outbreak --episode 13
+python scripts/validate.py projects/my-video --audio             # schema, assets, references, timing
+python scripts/preview.py projects/my-video                      # keyframes + contact sheet + composition report
+python scripts/make_video.py projects/phase1-test                # render (+ automatic final check)
+python scripts/check_output.py projects/phase1-test              # format, loudness, SRT sync, random frames
 python scripts/make_video.py projects/phase1-test --tts espeak      # force a backend
 python scripts/make_video.py projects/phase1-test --max-seconds 5   # quick partial render
 python scripts/make_video.py projects/phase3-test --workers 1       # disable parallel rendering
@@ -39,7 +53,21 @@ python scripts/character_sheet.py delivery_guy store_manager --mode poses --rig 
 python -m unittest discover tests
 ```
 
-Output in `projects/<slug>/output/`: `final.mp4`, `captions.srt`, `timeline.json`.
+Output in `projects/<slug>/output/`: `final.mp4`, `captions.srt`, `post.txt`, `timeline.json` (shots, words, sound cues), `check/` (random frames).
+
+## Project layout
+
+```
+CLAUDE.md                 agent instructions        .claude/commands/   /new-video /revise /next-episode
+config/                   style.yaml, presets/, rig.yaml, rigs/, poses.yaml, expressions.yaml, music.yaml, voices.yaml
+engine/                   schema, tts, characters, poses, props, backgrounds, camera, lighting, transitions,
+                          captions, overlays, sfx, music, soundtrack, audio_mix, renderer, compose
+library/                  characters/, props/, backgrounds/, fonts/, sfx/, music/, voices/
+scripts/                  new_project, validate, preview, make_video, check_output, character_sheet
+series/<slug>/bible.md    continuity notes per series
+projects/<slug>/          story.md, screenplay.json, assets/, audio/ (cache, stems), previews/, output/
+tests/                    python -m unittest discover tests
+```
 
 ## How it works
 

@@ -14,6 +14,7 @@ class _Model(BaseModel):
 
 class Series(_Model):
     name: str
+    slug: Optional[str] = None           # series/<slug>/ holds the bible and continuity notes
     episode: Optional[int] = None
     badge: bool = True                   # series name + episode in the top-left corner
     clock: Optional[str] = None          # in-story clock under the badge, e.g. "18:30" (scenes/shots can change it)
@@ -194,6 +195,12 @@ class Music(_Model):
     enabled: bool = True
 
 
+class Post(_Model):
+    """Text for the social post (English)."""
+    caption: str                         # 1-3 short lines, hook + question
+    hashtags: list[str] = Field(default_factory=list)
+
+
 class Screenplay(_Model):
     title: str
     series: Optional[Series] = None
@@ -204,6 +211,7 @@ class Screenplay(_Model):
     scenes: list[Scene]
     ending: Ending = Field(default_factory=Ending)
     music: Music = Field(default_factory=Music)
+    post: Optional[Post] = None
 
     @model_validator(mode="after")
     def _check_refs(self) -> "Screenplay":

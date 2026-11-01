@@ -20,10 +20,21 @@ def main(
     tts: str = typer.Option("", help="Comma-separated TTS backends to try, e.g. 'edge' or 'espeak'"),
     max_seconds: float = typer.Option(0, help="Render only the first N seconds (0 = all)"),
     workers: int = typer.Option(0, help="Parallel render processes (0 = all CPU cores, 1 = off)"),
+    check: bool = typer.Option(True, help="run scripts/check_output.py after rendering"),
 ):
     backends = [b.strip() for b in tts.split(",") if b.strip()] or None
     res = make_video(project, backends=backends, max_seconds=max_seconds or None, workers=workers)
-    typer.echo(f"\nDone: {res['video']}  ({res['duration']:.2f}s)\nSRT:  {res['srt']}")
+    typer.echo(f"\nDone: {res['video']}  ({res['duration']:.2f}s)\nSRT:  {res['srt']}\nPost: {res['post']}")
+    if check and not max_seconds:
+        from scripts.check_output import check as check_output
+        fails, notes, s = check_output(project)
+        typer.echo(f"Check: {s.get('lufs')} LUFS, peak {s.get('peak')} dBFS, frames {s.get('strip')}")
+        for n in notes:
+            typer.echo(f"  note {n}")
+        for f in fails:
+            typer.echo(f"  FAIL {f}")
+        if fails:
+            raise typer.Exit(1)
 
 
 if __name__ == "__main__":

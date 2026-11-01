@@ -144,13 +144,19 @@ def measure_lufs(path: Path) -> float | None:
     return float(m[-1]) if m else None
 
 
-def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds: float | None = None,
-               log=print, workers: int = 0) -> dict:
+def load_project(project_dir: Path):
+    """screenplay (characters resolved), merged style, voices config."""
     project_dir = Path(project_dir)
     sp = load_screenplay(project_dir / "screenplay.json")
     sp.characters = [resolve_character(c, project_dir) for c in sp.characters]
     style = load_style(sp.style_preset, sp.style_overrides)
-    voices_cfg = load_voices()
+    return sp, style, load_voices()
+
+
+def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds: float | None = None,
+               log=print, workers: int = 0) -> dict:
+    project_dir = Path(project_dir)
+    sp, style, voices_cfg = load_project(project_dir)
     out_dir = project_dir / "output"
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -173,4 +179,25 @@ def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds
         "shots": [{"scene": s.scene_id, "shot": s.index + 1, "start": round(s.start, 3), "end": round(s.end, 3),
                    "speaker": s.speaker, "words": [[w, round(a, 3), round(b, 3)] for w, a, b in s.words]}
                   for s in tl.shots], "audio": audio_report}, indent=1), encoding="utf-8")
-    return {"video": final, "duration": tl.total, "srt": out_dir / "captions.srt"}
+    (out_dir / "post.txt").write_text(post_text(sp), encoding="utf-8")
+    return {"video": final, "duration": tl.total, "srt": out_dir / "captions.srt", "post": out_dir / "post.txt"}
+
+
+def post_text(sp: Screenplay) -> str:
+    """post.txt: the screenplay's `post` (written by the agent) or a template fallback."""
+    if sp.post:
+        tags = " ".join(h if h.startswith("#") else f"#{h}" for h in sp.post.hashtags)
+        return f"{sp.post.caption.strip()}\n\n{tags}\n"
+    head = sp.title
+    if sp.series:
+        head = f"{sp.series.name} · Ep {sp.series.episode}: {sp.title}" if sp.series.episode else sp.series.name
+    lines = [head]
+    if sp.ending.question:
+        lines.append(sp.ending.question)
+    if sp.ending.type == "poll" and sp.ending.options:
+        lines.append(" / ".join(f"{i}) {o.text}" for i, o in enumerate(sp.ending.option_list(), 1)))
+        lines.append(sp.ending.cta or "Comment 1 or 2 👇")
+    tags = ["#animation", "#story", "#shorts", "#reels", "#fyp"]
+    if sp.series:
+        tags.insert(0, "#" + "".join(w.capitalize() for w in sp.series.name.split()))
+    return "\n".join(lines) + "\n\n" + " ".join(tags) + "\n"

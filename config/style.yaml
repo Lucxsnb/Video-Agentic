@@ -73,6 +73,7 @@ timing:
   breath_after: 0.30       # silence after the line before cutting (s)
   min_shot: 1.0            # minimum shot length (s)
   default_shot: 2.0        # length of shots without a line and without duration
+  target_duration: [45, 75]   # seconds; validate.py warns outside this range
 
 audio:
   loudnorm: true

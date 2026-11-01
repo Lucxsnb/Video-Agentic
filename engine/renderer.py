@@ -198,6 +198,7 @@ class FrameRenderer:
         self.anchors = anchors
         M = camera_matrix(shot.shot.camera, max(0.0, t - shot.start), shot.duration, self.W, self.H,
                           anchors, self.style)
+        self.matrix = M
         canvas.clear(skia.ColorBLACK)
         canvas.save()
         canvas.concat(M)

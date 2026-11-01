@@ -130,6 +130,22 @@ class CaptionTrack:
                 return p
         return None
 
+    def page_box(self, page: Page) -> tuple[float, float, float, float]:
+        """Screen rectangle (left, top, right, bottom) covered by a page, including the speaker pill."""
+        cfg = self.cfg
+        size = cfg["size"]
+        font = self.font_italic if page.italic else self.font
+        line_h = cfg.get("line_height", 1.12) * size
+        block_h = line_h * len(page.lines)
+        top = (page.center_y if page.center_y is not None else cfg.get("center_y", 0.7)) * self.H - block_h / 2
+        widths = [sum(font.measureText(page.words[i].display) for i in idxs) + self._gap() * (len(idxs) - 1)
+                  for idxs in page.lines]
+        w = max(widths, default=0) + cfg.get("stroke_width", 16)
+        bottom = top + block_h
+        if page.tag:
+            top -= self.tag_font.getSize() * (1.6 + cfg.get("tag", {}).get("gap", 0.25))
+        return (self.W - w) / 2, top, (self.W + w) / 2, bottom
+
     def draw(self, c: skia.Canvas, t: float) -> None:
         page = self.page_at(t)
         if not page:
