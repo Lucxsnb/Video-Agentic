@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" data-height="1.0" data-anchor="0.5,0.5">
+  <!-- Full-frame store glass doors seen from inside: place at x 0.5, y 0.5, layer front.
+       Params: store (decal text), sign (door sign). -->
+  <rect x="0" y="0" width="1080" height="1920" fill="#7FA7D9" opacity="0.10"/>
+  <g fill="#3F4652" stroke="#1d1d22" stroke-width="{{ow}}">
+    <rect x="-10" y="0" width="80" height="1920"/>
+    <rect x="1010" y="0" width="80" height="1920"/>
+    <rect x="500" y="0" width="80" height="1920"/>
+    <rect x="-10" y="-10" width="1100" height="120"/>
+    <rect x="-10" y="1780" width="1100" height="160"/>
+  </g>
+  <rect x="440" y="860" width="24" height="260" rx="12" fill="#9BA3AD" stroke="#1d1d22" stroke-width="{{ow2}}"/>
+  <rect x="616" y="860" width="24" height="260" rx="12" fill="#9BA3AD" stroke="#1d1d22" stroke-width="{{ow2}}"/>
+  <g fill="#ffffff" opacity="0.10">
+    <path d="M90 110 L260 110 L90 520 Z"/><path d="M600 110 L700 110 L600 340 Z"/>
+    <path d="M300 1780 L470 1360 L470 1780 Z"/><path d="M880 1780 L990 1500 L990 1780 Z"/>
+  </g>
+  <g opacity="0.9">
+    <rect x="120" y="300" width="300" height="70" rx="10" fill="#2E8B57" stroke="#1d1d22" stroke-width="{{ow2}}"/>
+    <text x="270" y="347" font-family="Montserrat" font-weight="900" font-size="38" fill="#ffffff" text-anchor="middle">{{store|FRESHMART}}</text>
+  </g>
+  <rect x="660" y="300" width="260" height="96" rx="10" fill="#F2EDE1" stroke="#1d1d22" stroke-width="{{ow2}}"/>
+  <text x="790" y="364" font-family="Montserrat" font-weight="900" font-size="44" fill="#C8432B" text-anchor="middle">{{sign|CLOSED}}</text>
+  <path d="M600 1500 l60 -40 l40 70 l70 -30" stroke="#ffffff" stroke-width="4" fill="none" opacity="0.5"/>
+</svg>

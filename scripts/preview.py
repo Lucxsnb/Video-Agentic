@@ -66,8 +66,14 @@ def check_frame(r: FrameRenderer, sh, t: float, W: int, H: int) -> list[str]:
         hc, ht = M.mapXY(*a["head"]), M.mapXY(*a["head_top"])
         rad = math.hypot(hc.x() - ht.x(), hc.y() - ht.y())
         faces[actor.id] = (hc.x(), hc.y(), rad)
+        cam = sh.shot.camera
+        focus = {(cam.target or "").split(".")[0], (cam.target_to or "").split(".")[0], sh.speaker}
+        targets_face = actor.id in focus and (cam.target or "").partition(".")[2] in ("", "head", "head_top", "mouth")
         if hc.x() + rad < 0 or hc.x() - rad > W or hc.y() + rad < 0 or hc.y() - rad > H:
-            issues.append(f"{actor.id}: head out of frame")
+            if targets_face or actor.id == sh.speaker:
+                issues.append(f"{actor.id}: head out of frame")
+            else:
+                issues.append(f"{NOTE}{actor.id}: head out of frame (ok for an insert / partial framing)")
         elif hc.x() - rad * 0.3 < 0 or hc.x() + rad * 0.3 > W or hc.y() - rad * 0.3 < 0:
             issues.append(f"{NOTE}{actor.id}: head cut by the frame edge (ok for over-the-shoulder)")
     boxes = []

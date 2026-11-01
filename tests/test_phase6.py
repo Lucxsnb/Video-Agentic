@@ -77,3 +77,22 @@ class TestHelpers(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPreviewRules(unittest.TestCase):
+    def test_head_out_of_frame_is_note_for_inserts(self):
+        from types import SimpleNamespace
+
+        import skia
+
+        from engine.schema import Shot
+        from scripts.preview import NOTE, check_frame
+        sh = SimpleNamespace(shot=Shot(camera={"from": 2.5, "target": "a.hand_l"},
+                                       actors=[{"id": "a"}, {"id": "b"}]), speaker="b")
+        anchors = {"a": {"head": (540, -500), "head_top": (540, -600)},
+                   "b": {"head": (540, -500), "head_top": (540, -600)}}
+        r = SimpleNamespace(matrix=skia.Matrix(), anchors=anchors, overlays=None,
+                            captions=SimpleNamespace(page_at=lambda t: None))
+        issues = check_frame(r, sh, 0.0, 1080, 1920)
+        self.assertTrue(any(i.startswith(NOTE) and i[len(NOTE):].startswith("a:") for i in issues))
+        self.assertIn("b: head out of frame", issues)      # the speaker must be visible

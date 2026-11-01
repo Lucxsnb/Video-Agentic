@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <!-- Night street seen from inside a store (combine with the glass_doors prop in front). -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#070A12"/><stop offset="1" stop-color="#18223A"/></linearGradient>
+    <linearGradient id="road" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E2430"/><stop offset="1" stop-color="#0E1118"/></linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FFD58A" stop-opacity="0.55"/><stop offset="1" stop-color="#FFD58A" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#sky)"/>
+  <g fill="#121725" stroke="#1d1d22" stroke-width="6">
+    <rect x="-20" y="420" width="300" height="900"/><rect x="260" y="560" width="260" height="760"/>
+    <rect x="500" y="380" width="330" height="940"/><rect x="810" y="500" width="300" height="820"/>
+  </g>
+  <g fill="#E9C46A" opacity="0.55">
+    <rect x="40" y="500" width="50" height="60"/><rect x="160" y="620" width="50" height="60"/><rect x="560" y="470" width="50" height="60"/>
+    <rect x="700" y="620" width="50" height="60"/><rect x="880" y="580" width="50" height="60"/><rect x="330" y="680" width="50" height="60"/>
+  </g>
+  <g fill="#0B0E16"><rect x="160" y="500" width="50" height="60"/><rect x="620" y="760" width="50" height="60"/><rect x="980" y="700" width="50" height="60"/></g>
+  <rect x="0" y="1300" width="1080" height="620" fill="url(#road)"/>
+  <path d="M0 1300 H1080" stroke="#1d1d22" stroke-width="8"/>
+  <g fill="#3A4252" opacity="0.6"><rect x="80" y="1560" width="160" height="16"/><rect x="460" y="1560" width="160" height="16"/><rect x="840" y="1560" width="160" height="16"/></g>
+  <!-- street lamp -->
+  <rect x="842" y="420" width="16" height="890" fill="#2A303C" stroke="#1d1d22" stroke-width="5"/>
+  <path d="M850 430 q-80 -10 -120 30" stroke="#2A303C" stroke-width="16" fill="none"/>
+  <ellipse cx="730" cy="470" rx="34" ry="12" fill="#FFE7A8"/>
+  <circle cx="730" cy="520" r="260" fill="url(#lamp)"/>
+  <!-- abandoned car -->
+  <path d="M40 1260 q20 -90 120 -100 h170 q80 0 120 100 z" fill="#3B4A63" stroke="#1d1d22" stroke-width="8"/>
+  <rect x="20" y="1250" width="460" height="70" rx="20" fill="#34425A" stroke="#1d1d22" stroke-width="8"/>
+  <circle cx="110" cy="1320" r="34" fill="#15181F" stroke="#1d1d22" stroke-width="6"/><circle cx="390" cy="1320" r="34" fill="#15181F" stroke="#1d1d22" stroke-width="6"/>
+  <ellipse cx="430" cy="1272" rx="20" ry="10" fill="#C8432B" opacity="0.8"/>
+  <!-- smoke haze -->
+  <ellipse cx="300" cy="1180" rx="420" ry="110" fill="#5A6680" opacity="0.10"/>
+</svg>

@@ -110,3 +110,12 @@ nervous:
   leg_l: [2, 0]
   leg_r: [2, 0]
   anim: {"lean": [1.2, 7, 0], "arm_l.1": [4, 6, 0], "arm_r.1": [4, 6, 0.5]}
+
+reach:             # arms stretched forward toward the camera (zombies, grabbing, sleepwalking)
+  arm_l: [72, -42]
+  arm_r: [78, -36]
+  leg_l: [5, 0]
+  leg_r: [3, 0]
+  head_tilt: 9
+  lean: 3
+  anim: {"lean": [2.5, 0.45, 0], "head_tilt": [4, 0.35, 0.3], "arm_l.0": [6, 0.7, 0], "arm_r.0": [6, 0.7, 0.4]}

@@ -1,0 +1,3 @@
+{"id": "infected_a", "label": "INFECTED", "gender": "male",
+ "look": {"skin": "#9DB38A", "shirt": "#5E6A72", "pants": "#3A3328", "hair": "#2E2E2E", "shoes": "#3A3530",
+          "accessories": ["hair_spiky", "arm_bandage_r"]}}

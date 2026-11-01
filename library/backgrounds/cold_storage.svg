@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <!-- Back of the store: walk-in cold storage door. Params: label, sticker. -->
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2C3436"/><stop offset="1" stop-color="#3B4547"/></linearGradient>
+    <linearGradient id="door" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9AA6AE"/><stop offset="0.5" stop-color="#C3CDD3"/><stop offset="1" stop-color="#8C98A0"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A4F52"/><stop offset="1" stop-color="#25282B"/></linearGradient>
+    <pattern id="tiles" width="120" height="120" patternUnits="userSpaceOnUse"><path d="M0 0 H120 M0 0 V120" stroke="#232A2C" stroke-width="4"/></pattern>
+    <radialGradient id="frost" cx="0.5" cy="1" r="0.8"><stop offset="0" stop-color="#E6F4FF" stop-opacity="0.75"/><stop offset="1" stop-color="#E6F4FF" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#wall)"/>
+  <rect width="1080" height="1320" fill="url(#tiles)" opacity="0.8"/>
+  <!-- door frame + door -->
+  <rect x="240" y="300" width="600" height="1030" fill="#5D676E" stroke="#1d1d22" stroke-width="10"/>
+  <rect x="280" y="340" width="520" height="990" rx="10" fill="url(#door)" stroke="#1d1d22" stroke-width="9"/>
+  <g stroke="#7E8A92" stroke-width="5" opacity="0.7"><path d="M280 520 H800 M280 760 H800 M280 1000 H800 M280 1220 H800"/></g>
+  <rect x="700" y="760" width="70" height="200" rx="16" fill="#3F4652" stroke="#1d1d22" stroke-width="8"/>
+  <rect x="716" y="800" width="38" height="120" rx="10" fill="#C9D2D8"/>
+  <path d="M280 1330 H800" stroke="#1d1d22" stroke-width="10"/>
+  <ellipse cx="540" cy="1320" rx="300" ry="70" fill="url(#frost)"/>
+  <rect x="280" y="1290" width="520" height="40" fill="#E6F4FF" opacity="0.25"/>
+  <!-- sign -->
+  <rect x="340" y="200" width="400" height="80" rx="8" fill="#2F5DA8" stroke="#1d1d22" stroke-width="7"/>
+  <text x="540" y="255" font-family="Montserrat" font-weight="900" font-size="40" fill="#ffffff" text-anchor="middle">{{label|COLD STORAGE}}</text>
+  <rect x="400" y="560" width="280" height="90" rx="6" fill="#F2EDE1" stroke="#1d1d22" stroke-width="6" transform="rotate(-4 540 605)"/>
+  <text x="540" y="618" font-family="Montserrat" font-weight="900" font-size="34" fill="#C8432B" text-anchor="middle" transform="rotate(-4 540 605)">{{sticker|DO NOT OPEN}}</text>
+  <!-- blue indicator light -->
+  <rect x="860" y="420" width="40" height="40" rx="8" fill="#56A8FF" stroke="#1d1d22" stroke-width="5"/>
+  <circle cx="880" cy="440" r="60" fill="#56A8FF" opacity="0.15"/>
+  <!-- floor -->
+  <rect x="0" y="1330" width="1080" height="590" fill="url(#floor)"/>
+  <path d="M0 1330 H1080" stroke="#1d1d22" stroke-width="8"/>
+  <path d="M120 1700 q60 -14 140 4 q30 16 -40 22 q-90 6 -100 -26z" fill="#9FC7E6" opacity="0.18"/>
+  <!-- boxes -->
+  <g stroke="#1d1d22" stroke-width="7">
+    <rect x="40" y="1130" width="170" height="200" fill="#A97E4C"/><rect x="60" y="960" width="140" height="170" fill="#B98A55"/>
+    <rect x="880" y="1150" width="170" height="180" fill="#A97E4C"/>
+  </g>
+</svg>

@@ -1,0 +1,3 @@
+{"id": "manager", "label": "MR. HOLLIS", "voice": "en-GB-RyanNeural", "gender": "male", "tag_color": "#E07B24",
+ "look": {"skin": "#F0D2B6", "shirt": "#BFD4E6", "pants": "#3A3F4B", "hair": "#8E8E8E", "build": 1.22, "sleeves": "long",
+          "accessories": ["hair_short", "glasses", "tie_red", "name_tag", "mustache"]}}

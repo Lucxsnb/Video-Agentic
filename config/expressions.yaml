@@ -20,3 +20,4 @@ smug:      {eyes: 0.6, pupil: 1.0, brows: {angle: -6, lift: 0.02}, mouth: smirk}
 determined: {eyes: 0.8, pupil: 1.0, brows: {angle: -16, lift: -0.02}, mouth: flat}
 tired:     {eyes: 0.45, pupil: 1.0, look: [0, 0.4], brows: {angle: 8, lift: -0.02}, mouth: flat, extras: [stubble]}
 embarrassed: {eyes: 0.9, pupil: 0.9, look: [0.6, 0.5], brows: {angle: 14, lift: 0.03}, mouth: wavy, extras: [blush]}
+zombie:    {eyes: 0.8, pupil: 0.22, look: [0, 0.25], brows: {angle: -10, lift: -0.03}, mouth: grit, extras: [stubble]}

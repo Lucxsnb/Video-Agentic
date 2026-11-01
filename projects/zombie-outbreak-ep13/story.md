@@ -1,0 +1,3 @@
+Episode 13 of a zombie mini-series. A delivery guy is locked inside a supermarket with a nervous store manager. He has a bandaged bite on his arm. His phone rings: it's his mom. The audience voted last episode that he answers. The manager writes a message on a cardboard sign for him to read so his mom won't panic: "Hi mom, everything is going according to plan. Don't come in." Meanwhile, the manager holds a hammer behind the delivery guy's head, just in case. A store employee in a green cap holds the phone to his ear. End with a poll: "Should they open the cold storage room?" ① Yes ② No.
+
+Target length: 2:50 to 3:00 (user request).
