@@ -1,0 +1,29 @@
+# Default voices per role. A character's own "voice" in screenplay.json wins.
+defaults:
+  narrator: en-US-AndrewNeural
+  male: en-US-BrianNeural
+  female: en-US-AvaNeural
+  male_alt: en-GB-RyanNeural
+  female_alt: en-US-EmmaNeural
+  kid: en-US-AnaNeural
+
+# Known edge-tts voices, with gender and offline fallbacks.
+catalog:
+  en-US-AndrewNeural: {gender: male,   espeak: "en-us+m3", espeak_pitch: 45, piper: en_US-ryan-medium}
+  en-US-BrianNeural:  {gender: male,   espeak: "en-us+m1", espeak_pitch: 35, piper: en_US-joe-medium}
+  en-US-GuyNeural:    {gender: male,   espeak: "en-us+m4", espeak_pitch: 40, piper: en_US-joe-medium}
+  en-US-ChristopherNeural: {gender: male, espeak: "en-us+m2", espeak_pitch: 30, piper: en_US-ryan-medium}
+  en-GB-RyanNeural:   {gender: male,   espeak: "en-gb+m3", espeak_pitch: 50, piper: en_GB-alan-medium}
+  en-US-AvaNeural:    {gender: female, espeak: "en-us+f3", espeak_pitch: 55, piper: en_US-amy-medium}
+  en-US-EmmaNeural:   {gender: female, espeak: "en-us+f2", espeak_pitch: 60, piper: en_US-lessac-medium}
+  en-US-JennyNeural:  {gender: female, espeak: "en-us+f4", espeak_pitch: 55, piper: en_US-lessac-medium}
+  en-GB-SoniaNeural:  {gender: female, espeak: "en-gb+f3", espeak_pitch: 55, piper: en_GB-alba-medium}
+  en-US-AnaNeural:    {gender: female, espeak: "en-us+f5", espeak_pitch: 80, piper: en_US-amy-medium}
+
+espeak:
+  speed: 160        # words per minute
+  default_male: "en-us+m3"
+  default_female: "en-us+f3"
+
+piper:
+  models_dir: library/voices/piper   # put <name>.onnx + <name>.onnx.json here

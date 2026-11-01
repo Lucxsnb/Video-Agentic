@@ -1,0 +1,77 @@
+# Global visual + timing style. Presets in config/presets/<name>.yaml are deep-merged on top.
+
+video:
+  width: 1080
+  height: 1920
+  fps: 30
+  codec: libx264
+  crf: 20
+  preset: medium
+  pix_fmt: yuv420p
+  audio_codec: aac
+  audio_bitrate: 192k
+  sample_rate: 48000
+
+palette:
+  outline: "#1d1d22"
+  highlight: "#F5A623"
+  text: "#FFFFFF"
+  shadow: "#000000"
+
+outline_width: 8
+
+caption:
+  font: library/fonts/Montserrat-ExtraBold.ttf
+  size: 112                # px
+  uppercase: true
+  center_y: 0.70           # vertical center of caption block (fraction of height)
+  max_width: 0.86          # fraction of width
+  max_words_per_page: 3
+  break_after: ".!?;:,"    # a page ends after a word ending with one of these
+  strip_punctuation: ".,;:"  # removed from displayed words ("?" and "!" stay)
+  line_height: 1.12        # x font size
+  word_gap: 0.22           # x font size (visible gap, stroke excluded)
+  stroke_width: 16
+  stroke_color: "#1d1d22"
+  shadow:
+    dx: 0
+    dy: 10
+    blur: 8
+    alpha: 0.55
+  pop:
+    duration: 0.14         # seconds of the pop-in animation per word
+    from_scale: 0.5
+    overshoot: 1.7         # easeOutBack strength
+  lead: 0.03               # show word slightly before it is spoken (s)
+  active_scale: 1.06       # word being spoken right now
+  hold_after: 0.35         # keep the last page on screen after speech (s)
+
+grain:
+  enabled: true
+  amount: 0.07             # 0..1 opacity of the noise layer
+  variants: 6              # pre-generated noise frames
+  fps: 12                  # how fast the grain changes
+
+vignette:
+  enabled: true
+  strength: 0.55           # alpha at the corners
+  inner: 0.45              # fraction of radius that stays clear
+
+timing:
+  pre_roll: 0.10           # silence before a line starts inside its shot (s)
+  breath_after: 0.30       # silence after the line before cutting (s)
+  min_shot: 1.0            # minimum shot length (s)
+  default_shot: 2.0        # length of shots without a line and without duration
+
+audio:
+  loudnorm: true
+  target_lufs: -14
+  true_peak: -1.5
+  lra: 11
+  voice_gain_db: 0.0
+
+tts:
+  backends: [edge, piper, espeak]   # tried in order
+  rate: "+6%"                       # edge-tts speaking rate
+  pitch: "+0Hz"
+  align: auto                       # auto | edge | whisper | estimate

@@ -1,0 +1,23 @@
+{
+  "title": "Phase 1 pipeline test",
+  "series": {"name": "ZOMBIE OUTBREAK", "episode": 13, "show_timer": true},
+  "style_preset": "miniseries",
+  "characters": [],
+  "scenes": [
+    {
+      "id": "s01",
+      "background": "store_wall_green_stripe",
+      "shots": [
+        {"line": {"text": "Day thirteen. He is locked inside a supermarket.", "highlight": ["thirteen", "supermarket"]}},
+        {"line": {"text": "Then his phone rings. It's his mom.", "highlight": ["phone", "mom"]}}
+      ]
+    },
+    {
+      "id": "s02",
+      "background": "night_blue",
+      "shots": [
+        {"line": {"text": "And she cannot know about the bite.", "highlight": ["bite"]}}
+      ]
+    }
+  ]
+}

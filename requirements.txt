@@ -1,0 +1,13 @@
+# Render
+skia-python>=87.5
+cairosvg>=2.7
+numpy>=1.26
+# Voice
+edge-tts>=7.0
+# Optional offline fallbacks (uncomment if you want them):
+# piper-tts>=1.2          # offline TTS (needs a voice .onnx in library/voices/piper/)
+# faster-whisper>=1.0     # word timestamps for non-edge voices
+# Data / CLI
+pydantic>=2.6
+pyyaml>=6.0
+typer>=0.12

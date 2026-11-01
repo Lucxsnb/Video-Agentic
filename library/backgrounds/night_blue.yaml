@@ -1,0 +1,4 @@
+layers:
+  - {rect: [0, 0, 1, 0.70], color: "#2C3E66", gradient: "#1B2744"}
+  - {rect: [0, 0.70, 1, 1], color: "#3B3F4A", gradient: "#25282F"}
+  - {hline: 0.70, color: "#1d1d22", width: 8}

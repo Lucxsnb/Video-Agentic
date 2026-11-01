@@ -1,0 +1,9 @@
+# Default preset: fast-cut 2D flat Reels mini-series look.
+# Only the keys that differ from config/style.yaml need to be here.
+caption:
+  uppercase: true
+  max_words_per_page: 3
+grain:
+  amount: 0.07
+vignette:
+  strength: 0.55
