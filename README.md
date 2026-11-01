@@ -12,7 +12,7 @@ Turns a story or prompt (any language) into a finished **vertical English video*
 | 4 | Overlays (series badge + story clock, speaker tags, cards, poll, end card), tall body variant | ✅ |
 | 5 | Procedural SFX (auto + manual), procedural/own music with ducking, stems | ✅ |
 | 6 | Agent: CLAUDE.md, slash commands, validate, preview + auto composition checks, output check, post.txt | ✅ |
-| 7 | End-to-end test | ⏳ |
+| 7 | End-to-end test: `projects/zombie-outbreak-ep13` (61 shots, 2:57) | ✅ |
 
 ## Using the agent (Claude Code)
 
