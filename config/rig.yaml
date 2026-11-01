@@ -10,8 +10,10 @@ leg:
   shin: 0.125
   thickness: 0.085
 foot:
-  w: 0.10
+  w: 0.105
   h: 0.05
+  ankle: 0.55           # leg ends this far (x shoe height) above the sole, hidden in the shoe
+  toe_out: 0.22         # shoe offset toward the outside (fraction of its width)
   color: "#2A2A30"
 torso:
   top_y: -0.565

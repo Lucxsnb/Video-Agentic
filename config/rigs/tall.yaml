@@ -9,8 +9,8 @@ leg:
   shin: 0.195
   thickness: 0.058
 foot:
-  w: 0.085
-  h: 0.04
+  w: 0.09
+  h: 0.046
 torso:
   top_y: -0.70
   bottom_y: -0.355

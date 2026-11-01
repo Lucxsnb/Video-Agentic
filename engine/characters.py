@@ -231,11 +231,33 @@ class CharacterRenderer:
             dx, dy = direction(side, a)
             knee = (hip[0] + L["thigh"] * dx, hip[1] + L["thigh"] * dy)
             dx2, dy2 = direction(side, a + k)
-            foot = (knee[0] + L["shin"] * dx2, knee[1] + L["shin"] * dy2)
-            self._tube(c, [hip, knee, foot], pants, L["thickness"])
-            r = skia.Rect.MakeXYWH(foot[0] - F["w"] / 2 + side * 0.015, foot[1] - F["h"] * 0.75, F["w"], F["h"])
-            c.drawOval(r, fill(col(shoes)))
-            c.drawOval(r, stroke(self.O, self.ow))
+            foot = (knee[0] + L["shin"] * dx2, knee[1] + L["shin"] * dy2)   # sole point (on the ground)
+            # the leg stops at the ankle, inside the shoe, so no round leg end shows below the sole
+            ank_len = max(F["h"] * F.get("ankle", 0.55), L["thickness"] / 2 + self.ow)
+            ankle = (foot[0] - dx2 * ank_len, foot[1] - dy2 * ank_len)
+            self._tube(c, [hip, knee, ankle], pants, L["thickness"])
+            self._shoe(c, foot, side, shoes, dx2, dy2)
+
+    def _shoe(self, c: skia.Canvas, foot: tuple[float, float], side: int, color: str, dx: float, dy: float) -> None:
+        """Flat-soled shoe: sole on the foot point, rounded top, toe pointing slightly outward.
+        Follows the shin angle (lifted feet tilt with the leg)."""
+        F = self.rig["foot"]
+        w, h = F["w"], F["h"]
+        out = F.get("toe_out", 0.22)
+        c.save()
+        c.translate(*foot)
+        c.rotate(math.degrees(math.atan2(-dx, dy)) * -1 if abs(dx) > 1e-3 else 0.0)
+        x0 = -w / 2 + side * w * out
+        sole = skia.Path()
+        sole.addRRect(skia.RRect.MakeRectXY(skia.Rect.MakeXYWH(x0, -h, w, h), h * 0.5, h * 0.5))
+        flat = op(sole, rect_path(x0 - 1, -h * 2, x0 + w + 1, 0), INTERSECT)   # cut the bottom flat
+        top = skia.Path()
+        top.addOval(skia.Rect.MakeXYWH(x0, -h * 1.15, w, h * 1.3))
+        shoe = op(op(top, rect_path(x0 - 1, -h * 2, x0 + w + 1, 0), INTERSECT), flat, UNION)
+        c.drawPath(shoe, fill(col(color)))
+        c.drawRect(skia.Rect.MakeLTRB(x0, -h * 0.22, x0 + w, 0), fill(col("#000000", 0.25)))   # sole band
+        c.drawPath(shoe, stroke(self.O, self.ow))
+        c.restore()
 
     def _torso(self, c: skia.Canvas, breath: float) -> float:
         T = self.rig["torso"]
