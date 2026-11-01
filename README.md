@@ -7,7 +7,7 @@ Turns a story or prompt (any language) into a finished **vertical English video*
 | Phase | What | State |
 |---|---|---|
 | 1 | Background + kinetic captions + TTS with word timestamps + mux | ✅ |
-| 2 | Rigged characters, poses, expressions, lip flap | ⏳ |
+| 2 | Rigged characters, poses, expressions, lip flap | ✅ |
 | 3 | SVG props/sets, camera, transitions | ⏳ |
 | 4 | Overlays (series badge, timer, speaker tag, poll), grain/vignette polish | ⏳ |
 | 5 | Procedural SFX, music + ducking | ⏳ |
@@ -34,6 +34,7 @@ pip install -r requirements.txt
 python scripts/make_video.py projects/phase1-test
 python scripts/make_video.py projects/phase1-test --tts espeak      # force a backend
 python scripts/make_video.py projects/phase1-test --max-seconds 5   # quick partial render
+python scripts/character_sheet.py delivery_guy store_manager --mode poses --out sheet.png   # or --mode expressions
 python -m unittest discover tests
 ```
 
@@ -46,6 +47,15 @@ Output in `projects/<slug>/output/`: `final.mp4`, `captions.srt`, `timeline.json
 3. `engine/compose.py` sets each shot's length from its audio (+ `timing.pre_roll` / `breath_after`), mixes voice, normalizes to −14 LUFS with a true-peak limiter.
 4. `engine/renderer.py` draws each frame with skia (background → vignette → grain → captions) and pipes raw RGBA straight into FFmpeg.
 
-All visual/timing values live in `config/style.yaml` (+ `config/presets/*.yaml`); voices in `config/voices.yaml`.
+### Characters (Phase 2)
+
+- Reusable characters: `library/characters/<name>.json` (look, voice, label). In a screenplay: `{"id": "courier", "library": "delivery_guy"}`; fields set in the screenplay override the library.
+- Look: `skin`, `shirt`, `pants`, `hair`, `shoes`, `sleeves` (short/long), `build` (torso width), `height`, `accessories` (names from `config/rig.yaml`, or `kind:#color`, e.g. `cap:#2E8B57`).
+- Poses (`config/poses.yaml`): idle, talk, point, hold, hold_both, hold_up, phone_ear, cross_arms, shrug, shock, run, hit, wave, nervous — joint angles + oscillations + keyframes.
+- Expressions (`config/expressions.yaml`): neutral, happy, excited, worried, nervous, scared, shock, angry, sad, suspicious, confused, smug, determined, tired, embarrassed (+ extras: sweat, stubble, blush, shock lines, tear, anger).
+- Automatic: blinking, breathing, lip flap from the speaker's voice loudness, head bob and gestures while talking. `facing` moves the eyes, `flip` mirrors.
+- Each draw returns anchors (`hand_l`, `hand_r`, `head`, `head_top`, `mouth`, `chest`, `feet`) used by props in Phase 3.
+
+All visual/timing values live in `config/style.yaml` (+ `config/presets/*.yaml`); character rig in `config/rig.yaml`, `poses.yaml`, `expressions.yaml`; voices in `config/voices.yaml`.
 
 Fonts: Montserrat (SIL Open Font License, `library/fonts/OFL.txt`).

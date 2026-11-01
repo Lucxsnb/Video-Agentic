@@ -1,0 +1,27 @@
+{
+  "title": "Phase 2 character test",
+  "style_preset": "miniseries",
+  "characters": [
+    {"id": "courier", "library": "delivery_guy"},
+    {"id": "manager", "library": "store_manager"},
+    {"id": "clerk", "library": "store_clerk"}
+  ],
+  "scenes": [
+    {
+      "id": "s01",
+      "background": "store_wall_green_stripe",
+      "shots": [
+        {"actors": [{"id": "courier", "x": 0.5, "y": 0.86, "scale": 1.15, "pose": "nervous", "expression": "worried"}],
+         "line": {"speaker": "narrator", "text": "Day thirteen. Still locked inside.", "highlight": ["thirteen"]}},
+        {"actors": [{"id": "manager", "x": 0.26, "y": 0.84, "pose": "point", "expression": "angry", "facing": "right"},
+                    {"id": "courier", "x": 0.75, "y": 0.86, "pose": "idle", "expression": "scared", "facing": "left"}],
+         "line": {"speaker": "manager", "text": "Why is your arm bleeding?", "highlight": ["bleeding"]}},
+        {"actors": [{"id": "manager", "x": 0.26, "y": 0.84, "pose": "cross_arms", "expression": "suspicious", "facing": "right"},
+                    {"id": "courier", "x": 0.75, "y": 0.86, "pose": "shrug", "expression": "nervous", "facing": "left"}],
+         "line": {"speaker": "courier", "text": "It's nothing. Just a scratch.", "highlight": ["scratch"]}},
+        {"actors": [{"id": "clerk", "x": 0.5, "y": 0.86, "scale": 1.15, "pose": "shock", "expression": "shock"}],
+         "line": {"speaker": "clerk", "text": "That is a bite!", "highlight": ["bite!"]}}
+      ]
+    }
+  ]
+}

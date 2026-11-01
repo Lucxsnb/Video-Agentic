@@ -9,12 +9,37 @@ from pathlib import Path
 import numpy as np
 import skia
 
+from . import audio_mix
 from .backgrounds import Atmosphere, find_background, render_background
 from .captions import CaptionTrack
+from .characters import CharacterRenderer, load_rig
+from .poses import PoseLibrary
+
+
+def mouth_envelope(wav: Path, fps: int, rig: dict) -> np.ndarray:
+    """Per-frame mouth openness 0..1 from the voice clip loudness (cartoon lip flap)."""
+    sr = 16000
+    y = audio_mix.decode(wav, sr)
+    hop = sr // fps
+    n = max(1, len(y) // hop)
+    rms = np.sqrt(np.mean(y[: n * hop].reshape(n, hop) ** 2, axis=1))
+    ref = np.percentile(rms, 95) or 1.0
+    tk = rig["talk"]
+    env = np.clip(rms / ref * tk["mouth_gain"] - 0.15, 0, 1)
+    # fast attack, slower release
+    out = np.zeros_like(env)
+    prev = 0.0
+    for i, v in enumerate(env):
+        prev = v if v > prev else prev * 0.55 + v * 0.45
+        out[i] = prev
+    levels = tk.get("levels", 0)
+    if levels:
+        out = np.round(out * levels) / levels
+    return out
 
 
 class FrameRenderer:
-    def __init__(self, timeline, style: dict, project_dir: Path):
+    def __init__(self, timeline, style: dict, project_dir: Path, characters=None):
         self.tl = timeline
         self.style = style
         v = style["video"]
@@ -26,6 +51,14 @@ class FrameRenderer:
         for sh in timeline.shots:
             if sh.words:
                 self.captions.add_line(sh.words, sh.highlight, sh.line_end, sh.end)
+        self.rig = load_rig()
+        self.poses = PoseLibrary()
+        self.chars = {c.id: CharacterRenderer(c, style, self.rig) for c in (characters or [])}
+        self.envelopes: dict[int, np.ndarray] = {}
+        for i, sh in enumerate(timeline.shots):
+            if sh.voice_wav and sh.speaker in self.chars:
+                self.envelopes[i] = mouth_envelope(sh.voice_wav, self.fps, self.rig)
+        self.anchors: dict[str, dict] = {}   # last drawn anchors per actor (props attach here)
 
     def background(self, name: str) -> skia.Image:
         if name not in self._bg_cache:
@@ -37,11 +70,36 @@ class FrameRenderer:
         shot = self.tl.shot_at(t)
         canvas.clear(skia.ColorBLACK)
         canvas.drawImage(self.background(shot.background), 0, 0)
-        # Phase 2+: characters, props, camera, transitions
+        self.draw_actors(canvas, shot, t)
+        # Phase 3: props, camera, transitions
         self.atmo.draw_vignette(canvas)
         self.atmo.draw_grain(canvas, t)
         self.captions.draw(canvas, t)
         # Phase 4: overlays
+
+    def speech_level(self, shot, actor_id: str, t: float) -> float:
+        if shot.speaker != actor_id:
+            return 0.0
+        env = self.envelopes.get(self.tl.shots.index(shot))
+        if env is None:
+            return 0.0
+        i = int((t - shot.voice_start) * self.fps)
+        return float(env[i]) if 0 <= i < len(env) else 0.0
+
+    def draw_actors(self, canvas: skia.Canvas, shot, t: float) -> None:
+        self.anchors = {}
+        local = t - shot.start
+        for actor in sorted(shot.shot.actors, key=lambda a: a.y):
+            ch = self.chars.get(actor.id)
+            if not ch:
+                continue
+            level = self.speech_level(shot, actor.id, t)
+            talking = 1.0 if (shot.speaker == actor.id and shot.voice_start <= t <= shot.line_end) else 0.0
+            pose = self.poses.pose(actor.pose, local, speaking=talking)
+            expr = self.poses.expression(actor.expression)
+            self.anchors[actor.id] = ch.draw(
+                canvas, actor.x * self.W, actor.y * self.H, self.H, actor.scale, pose, expr, t,
+                mouth_open=level, speaking=talking, facing=actor.facing, flip=actor.flip)
 
     def frame(self, t: float) -> np.ndarray:
         arr = np.zeros((self.H, self.W, 4), dtype=np.uint8)

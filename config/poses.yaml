@@ -1,0 +1,112 @@
+# Poses. Joint angles in degrees.
+#   arm_x: [shoulder, elbow]  shoulder 0 = hanging down, 90 = horizontal outward, 180 = straight up.
+#                             elbow is added to shoulder; negative bends the forearm inward/across the body.
+#   leg_x: [hip, knee]        same convention.
+#   lean: torso rotation around the hips (deg, + = clockwise), head_tilt: deg, bob: lift in U.
+# "_l" = screen-left limb, "_r" = screen-right limb. actor.flip mirrors the pose.
+# Optional:
+#   anim: oscillations  {key: [amplitude, freq_hz, phase_0_1]}  key = "arm_r.0", "leg_l.1", "bob", "lean", ...
+#   keys: keyframes over shot-local time [{t: 0, arm_r: [..]}, {t: 0.3, ...}] (eased), override base values.
+#   talk_anim: oscillations applied only while this actor is speaking.
+
+idle:
+  arm_l: [8, -4]
+  arm_r: [8, -4]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+  anim: {"arm_l.0": [1.5, 0.35, 0], "arm_r.0": [1.5, 0.35, 0.5]}
+
+talk:
+  arm_l: [10, -6]
+  arm_r: [35, -70]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+  talk_anim: {"arm_r.0": [10, 1.6, 0], "arm_r.1": [-14, 1.6, 0.2], "head_tilt": [3, 0.9, 0]}
+
+point:
+  arm_l: [8, -4]
+  arm_r: [95, 0]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+  head_tilt: 4
+  keys: [{t: 0, arm_r: [40, -20]}, {t: 0.18, arm_r: [100, 0]}, {t: 0.3, arm_r: [95, 0]}]
+
+hold:              # right hand in front of the chest (phone, sign, key)
+  arm_l: [8, -4]
+  arm_r: [28, -112]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+
+hold_both:         # both hands in front (cardboard sign)
+  arm_l: [32, -108]
+  arm_r: [32, -108]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+
+hold_up:           # right arm raised high (hammer above head)
+  arm_l: [8, -4]
+  arm_r: [150, 15]
+  leg_l: [4, 0]
+  leg_r: [4, 0]
+  anim: {"arm_r.0": [3, 0.8, 0]}
+
+phone_ear:         # hand at the ear
+  arm_l: [8, -4]
+  arm_r: [120, -270]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+  head_tilt: -6
+
+cross_arms:
+  arm_l: [22, -125]
+  arm_r: [22, -125]
+  leg_l: [5, 0]
+  leg_r: [5, 0]
+
+shrug:
+  arm_l: [55, 85]
+  arm_r: [55, 85]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+  head_tilt: 8
+  keys: [{t: 0, bob: 0}, {t: 0.15, bob: 0.02}, {t: 0.35, bob: 0}]
+
+shock:
+  arm_l: [140, 25]
+  arm_r: [140, 25]
+  leg_l: [12, 0]
+  leg_r: [12, 0]
+  keys: [{t: 0, bob: 0, arm_l: [20, 0], arm_r: [20, 0]}, {t: 0.12, bob: 0.06, arm_l: [150, 25], arm_r: [150, 25]},
+         {t: 0.28, bob: 0}]
+  anim: {"lean": [1.5, 9, 0]}
+
+run:
+  arm_l: [0, -60]
+  arm_r: [0, -60]
+  leg_l: [0, 0]
+  leg_r: [0, 0]
+  lean: 6
+  anim: {"arm_l.0": [40, 2.8, 0], "arm_r.0": [40, 2.8, 0.5], "leg_l.0": [18, 2.8, 0.5], "leg_r.0": [18, 2.8, 0],
+         "leg_l.1": [-25, 2.8, 0.25], "leg_r.1": [-25, 2.8, 0.75], "bob": [0.012, 5.6, 0]}
+
+hit:               # swing down with the right arm
+  arm_l: [8, -4]
+  arm_r: [40, -10]
+  leg_l: [6, 0]
+  leg_r: [6, 0]
+  keys: [{t: 0, arm_r: [165, 10], lean: -4}, {t: 0.18, arm_r: [170, 15], lean: -6},
+         {t: 0.32, arm_r: [40, -10], lean: 6}, {t: 0.5, lean: 0}]
+
+wave:
+  arm_l: [8, -4]
+  arm_r: [140, 20]
+  leg_l: [3, 0]
+  leg_r: [3, 0]
+  anim: {"arm_r.1": [22, 2.2, 0]}
+
+nervous:
+  arm_l: [18, -100]
+  arm_r: [18, -100]
+  leg_l: [2, 0]
+  leg_r: [2, 0]
+  anim: {"lean": [1.2, 7, 0], "arm_l.1": [4, 6, 0], "arm_r.1": [4, 6, 0.5]}

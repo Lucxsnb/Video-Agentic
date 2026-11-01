@@ -1,0 +1,3 @@
+{"id": "delivery_guy", "label": "DELIVERY GUY", "voice": "en-US-BrianNeural", "gender": "male",
+ "look": {"skin": "#E8C9A8", "shirt": "#C8432B", "pants": "#22252E", "hair": "#3A2A20",
+          "accessories": ["helmet_red_stripe", "arm_bandage", "vest_reflective"]}}

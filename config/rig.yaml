@@ -1,0 +1,100 @@
+# Character rig proportions. All lengths are fractions of the character unit U
+# (U = height * frame_height * actor.scale). Origin = between the feet, y grows downward.
+height: 0.42            # U as fraction of frame height (actor.scale = 1)
+outline_scale: 1.0      # multiplies style.outline_width
+
+leg:
+  hip_y: -0.26
+  hip_dx: 0.075
+  thigh: 0.135
+  shin: 0.125
+  thickness: 0.085
+foot:
+  w: 0.10
+  h: 0.05
+  color: "#2A2A30"
+torso:
+  top_y: -0.565
+  bottom_y: -0.22
+  w: 0.31
+  radius: 0.07
+  pants_h: 0.07         # pants band at the bottom of the torso
+arm:
+  shoulder_y: -0.535
+  shoulder_dx: 0.145
+  upper: 0.14
+  lower: 0.13
+  thickness: 0.072
+  hand_r: 0.045
+head:
+  r: 0.23
+  cy: -0.765            # head center
+  ear_r: 0.05
+  eye_dx: 0.38          # following are fractions of head radius R
+  eye_y: -0.02
+  eye_r: 0.19
+  pupil_r: 0.095
+  brow_y: -0.36
+  brow_len: 0.30
+  brow_w: 0.085
+  mouth_y: 0.45
+  mouth_w: 0.40
+
+shading:
+  amount: 0.16          # darkening of the shadow side
+  side: 1               # 1 = shadow on the right, -1 left
+ground_shadow:
+  alpha: 0.28
+  w: 0.42
+  h: 0.06
+
+blink:
+  min_gap: 2.2          # seconds
+  max_gap: 4.8
+  duration: 0.13
+
+breath:
+  amp: 0.006            # vertical torso stretch
+  freq: 0.35            # Hz
+
+talk:
+  mouth_gain: 1.6       # envelope -> mouth openness
+  mouth_floor: 0.06     # below this the mouth is drawn closed
+  head_bob: 0.006       # U, head bob while talking
+  levels: 4             # quantize mouth openness (cartoon flaps); 0 = smooth
+
+colors:
+  mouth_inside: "#4A1A1E"
+  tongue: "#D9666F"
+  teeth: "#FFFFFF"
+  eye_white: "#FFFFFF"
+  pupil: "#1d1d22"
+  sweat: "#8FD3F4"
+  blush: "#F08A8A"
+  stubble: "#1d1d22"
+  default_hair: "#3A2A20"
+
+# Accessories. Use in a character's look.accessories by name, or "<kind>:<#color>" (e.g. "cap:#2E8B57").
+# kind = helmet | cap | hair_short | hair_spiky | hair_bun | hair_long | glasses | mustache | beard
+#        apron | tie | vest_stripes | name_tag | bandage
+accessories:
+  helmet_red_stripe: {kind: helmet, color: "#F2F2F2", stripe: "#C8432B"}
+  helmet_yellow:     {kind: helmet, color: "#E9C23A"}
+  cap_green:         {kind: cap, color: "#2E8B57"}
+  cap_red:           {kind: cap, color: "#C8432B"}
+  cap_blue:          {kind: cap, color: "#2F5DA8"}
+  apron_green:       {kind: apron, color: "#2E8B57"}
+  apron_brown:       {kind: apron, color: "#8A5A3B"}
+  tie_red:           {kind: tie, color: "#B8322E"}
+  tie_blue:          {kind: tie, color: "#2F5DA8"}
+  vest_reflective:   {kind: vest_stripes, color: "#E8E35A"}
+  name_tag:          {kind: name_tag, color: "#FFFFFF"}
+  glasses:           {kind: glasses, color: "#1d1d22"}
+  mustache:          {kind: mustache}
+  beard:             {kind: beard}
+  arm_bandage:       {kind: bandage, side: l, color: "#F4F1EA", stain: "#B3262B"}
+  arm_bandage_r:     {kind: bandage, side: r, color: "#F4F1EA", stain: "#B3262B"}
+  hair_short:        {kind: hair_short}
+  hair_spiky:        {kind: hair_spiky}
+  hair_bun:          {kind: hair_bun}
+  hair_long:         {kind: hair_long}

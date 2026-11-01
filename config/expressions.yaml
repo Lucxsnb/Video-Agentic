@@ -1,0 +1,22 @@
+# Facial expressions.
+#   eyes: openness (1 normal, >1 wide, <0.6 squint), pupil: pupil scale
+#   look: [x, y] pupil direction (-1..1)
+#   brows: {angle: deg (+ = inner ends up = worried), lift: fraction of head radius, asym: extra lift on the right brow}
+#   mouth: flat | smile | grin | frown | wavy | o | open | grit | smirk
+#   extras: sweat | stubble | blush | shock_lines | tear | anger
+
+neutral:   {eyes: 1.0, pupil: 1.0, brows: {angle: 0, lift: 0}, mouth: flat}
+happy:     {eyes: 0.9, pupil: 1.0, brows: {angle: 4, lift: 0.04}, mouth: smile}
+excited:   {eyes: 1.15, pupil: 1.0, brows: {angle: 6, lift: 0.08}, mouth: grin}
+worried:   {eyes: 1.0, pupil: 0.9, brows: {angle: 18, lift: 0.04}, mouth: wavy, extras: [sweat]}
+nervous:   {eyes: 1.05, pupil: 0.75, brows: {angle: 20, lift: 0.06}, mouth: grit, extras: [sweat]}
+scared:    {eyes: 1.3, pupil: 0.6, brows: {angle: 20, lift: 0.12}, mouth: o, extras: [sweat]}
+shock:     {eyes: 1.4, pupil: 0.5, brows: {angle: 10, lift: 0.18}, mouth: open, extras: [shock_lines]}
+angry:     {eyes: 0.85, pupil: 1.0, brows: {angle: -24, lift: -0.04}, mouth: grit, extras: [anger]}
+sad:       {eyes: 0.8, pupil: 1.0, look: [0, 0.5], brows: {angle: 22, lift: 0.02}, mouth: frown, extras: [tear]}
+suspicious: {eyes: 0.5, pupil: 1.0, look: [0.7, 0], brows: {angle: -10, lift: 0, asym: 0.08}, mouth: smirk}
+confused:  {eyes: 1.0, pupil: 1.0, look: [-0.4, -0.4], brows: {angle: 0, lift: 0.02, asym: 0.14}, mouth: wavy}
+smug:      {eyes: 0.6, pupil: 1.0, brows: {angle: -6, lift: 0.02}, mouth: smirk}
+determined: {eyes: 0.8, pupil: 1.0, brows: {angle: -16, lift: -0.02}, mouth: flat}
+tired:     {eyes: 0.45, pupil: 1.0, look: [0, 0.4], brows: {angle: 8, lift: -0.02}, mouth: flat, extras: [stubble]}
+embarrassed: {eyes: 0.9, pupil: 0.9, look: [0.6, 0.5], brows: {angle: 14, lift: 0.03}, mouth: wavy, extras: [blush]}

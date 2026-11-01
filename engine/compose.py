@@ -9,6 +9,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import audio_mix, tts
+from .characters import resolve_character
 from .config import load_style, load_voices
 from .renderer import FrameRenderer
 from .schema import Screenplay, Shot, load_screenplay
@@ -118,6 +119,7 @@ def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds
                log=print) -> dict:
     project_dir = Path(project_dir)
     sp = load_screenplay(project_dir / "screenplay.json")
+    sp.characters = [resolve_character(c, project_dir) for c in sp.characters]
     style = load_style(sp.style_preset, sp.style_overrides)
     voices_cfg = load_voices()
     out_dir = project_dir / "output"
@@ -136,7 +138,7 @@ def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds
     mix_wav = normalize_audio(mix_wav, project_dir / "audio" / "mix_norm.wav", style)
 
     log("3/3 Render video")
-    r = FrameRenderer(tl, style, project_dir)
+    r = FrameRenderer(tl, style, project_dir, sp.characters)
     final = r.render(mix_wav, out_dir / "final.mp4", None, max_seconds)
     (out_dir / "captions.srt").write_text(r.captions.to_srt(), encoding="utf-8")
     (out_dir / "timeline.json").write_text(json.dumps({

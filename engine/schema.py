@@ -24,6 +24,9 @@ class Look(_Model):
     pants: str = "#22252E"
     hair: Optional[str] = None
     shoes: Optional[str] = None
+    sleeves: Literal["short", "long"] = "short"
+    build: float = 1.0                   # torso width multiplier (0.8 slim .. 1.35 wide)
+    height: float = 1.0                  # overall size multiplier
     accessories: list[str] = Field(default_factory=list)
 
 

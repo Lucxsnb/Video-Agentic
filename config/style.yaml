@@ -24,7 +24,7 @@ caption:
   font: library/fonts/Montserrat-ExtraBold.ttf
   size: 112                # px
   uppercase: true
-  center_y: 0.70           # vertical center of caption block (fraction of height)
+  center_y: 0.77           # vertical center of caption block (fraction of height)
   max_width: 0.86          # fraction of width
   max_words_per_page: 3
   break_after: ".!?;:,"    # a page ends after a word ending with one of these

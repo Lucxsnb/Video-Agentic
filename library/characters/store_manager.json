@@ -1,0 +1,3 @@
+{"id": "store_manager", "label": "MANAGER", "voice": "en-GB-RyanNeural", "gender": "male",
+ "look": {"skin": "#F0D2B6", "shirt": "#F2F2EE", "pants": "#3A3F4B", "hair": "#6B6B6B", "build": 1.25,
+          "sleeves": "long", "accessories": ["hair_short", "glasses", "tie_blue", "name_tag", "mustache"]}}
