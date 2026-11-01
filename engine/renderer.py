@@ -244,6 +244,8 @@ class FrameRenderer:
             cmd += ["-i", str(audio_wav)]
         cmd += ["-c:v", v["codec"], "-preset", v["preset"], "-crf", str(v["crf"]), "-pix_fmt", v["pix_fmt"],
                 "-r", str(self.fps)]
+        if v.get("maxrate"):
+            cmd += ["-maxrate", str(v["maxrate"]), "-bufsize", str(v.get("bufsize", v["maxrate"]))]
         if audio_wav:
             if audio_filter:
                 cmd += ["-af", audio_filter]

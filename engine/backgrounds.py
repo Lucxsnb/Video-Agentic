@@ -104,7 +104,8 @@ class Atmosphere:
         if self.grain_on:
             rng = np.random.default_rng(seed)
             amount = float(g.get("amount", 0.07))
-            gw, gh = w, h
+            scale = max(1, int(g.get("scale", 2)))   # >1 = softer, film-like grain that compresses far better
+            gw, gh = w // scale, h // scale
             for _ in range(int(g.get("variants", 6))):
                 n = rng.integers(0, 256, size=(gh, gw), dtype=np.uint8)
                 arr = np.empty((gh, gw, 4), dtype=np.uint8)
@@ -138,4 +139,4 @@ class Atmosphere:
             return
         img = self.grain[int(t * self.grain_fps) % len(self.grain)]
         p = skia.Paint(BlendMode=skia.BlendMode.kOverlay)
-        c.drawImage(img, 0, 0, skia.SamplingOptions(), p)
+        c.drawImageRect(img, skia.Rect.MakeWH(self.w, self.h), skia.SamplingOptions(skia.FilterMode.kLinear), p)

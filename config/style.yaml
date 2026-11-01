@@ -5,8 +5,10 @@ video:
   height: 1920
   fps: 30
   codec: libx264
-  crf: 20
+  crf: 21
   preset: medium
+  maxrate: 9M              # cap for social platforms (keeps 3-min videos ~120-200 MB)
+  bufsize: 18M
   pix_fmt: yuv420p
   audio_codec: aac
   audio_bitrate: 192k
@@ -61,6 +63,7 @@ grain:
   enabled: true
   amount: 0.07             # 0..1 opacity of the noise layer
   variants: 6              # pre-generated noise frames
+  scale: 2                 # grain pixel size (1 = per-pixel noise: sharp but hard to compress)
   fps: 12                  # how fast the grain changes
 
 vignette:
