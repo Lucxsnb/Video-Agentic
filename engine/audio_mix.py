@@ -49,3 +49,37 @@ def mix_timeline(clips: list[tuple[float, Path, float]], total: float, sr: int =
         if i1 > i0:
             buf[i0:i1] += s[: i1 - i0]
     return buf
+
+
+def envelope(x: np.ndarray, sr: int, win: float = 0.02) -> np.ndarray:
+    """RMS envelope sampled every `win` seconds."""
+    hop = max(1, int(win * sr))
+    n = max(1, len(x) // hop)
+    return np.sqrt(np.mean(x[: n * hop].reshape(n, hop) ** 2, axis=1) + 1e-12)
+
+
+def duck_gain(voice: np.ndarray, sr: int, depth_db: float = -10.0, threshold_db: float = -40.0,
+              attack: float = 0.08, release: float = 0.4, win: float = 0.02) -> np.ndarray:
+    """Per-sample gain for the music: drops by depth_db while the voice is active."""
+    env = envelope(voice, sr, win)
+    active = 20 * np.log10(env) > threshold_db
+    low = db_to_gain(depth_db)
+    g = np.ones(len(env), dtype=np.float32)
+    cur = 1.0
+    a = 1 - np.exp(-win / max(attack, 1e-3))
+    r = 1 - np.exp(-win / max(release, 1e-3))
+    for i, on in enumerate(active):
+        target = low if on else 1.0
+        cur += (target - cur) * (a if target < cur else r)
+        g[i] = cur
+    xs = (np.arange(len(env)) + 0.5) * win * sr
+    return np.interp(np.arange(len(voice)), xs, g).astype(np.float32)
+
+
+def place(buf: np.ndarray, x: np.ndarray, start: float, sr: int, gain: float = 1.0) -> None:
+    i = int(round(start * sr))
+    if i < 0:
+        x, i = x[-i:], 0
+    j = min(len(buf), i + len(x))
+    if j > i:
+        buf[i:j] += x[: j - i] * gain

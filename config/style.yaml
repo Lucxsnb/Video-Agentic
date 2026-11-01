@@ -80,6 +80,29 @@ audio:
   true_peak: -1.5
   lra: 11
   voice_gain_db: 0.0
+  sfx_gain_db: -5.0
+  music:
+    default_mood: null     # mood used when the screenplay sets none (null = no music)
+    bed_db: -9             # music level vs. speech when screenplay music.volume = 0.15 (scales linearly)
+    duck_db: -9            # music level change while someone speaks
+    duck_threshold_db: -42
+    duck_attack: 0.08
+    duck_release: 0.45
+  # sounds added automatically from what happens on screen (set any to null to disable)
+  auto_sfx:
+    enabled: true
+    whip: {name: whoosh, offset: -0.2, volume: 0.75}       # offset from the cut
+    flash: {name: flash, offset: -0.06, volume: 0.6}
+    fade: null
+    punch: {name: hit, volume: 0.9}                         # x camera punch
+    card: {name: pop, volume: 0.7}
+    poll: {name: pop, volume: 0.6}
+    ending: {name: boom, volume: 0.6}
+    props:                                                  # by prop animation or svg name
+      pop: {name: pop, volume: 0.5}
+      drop: {name: drop, volume: 0.6}
+      ring: {name: ring, volume: 0.45, loop: true}          # lasts the whole shot
+      notification: {name: notify, volume: 0.7}
 
 tts:
   backends: [edge, piper, espeak]   # tried in order

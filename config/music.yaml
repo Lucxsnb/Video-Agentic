@@ -1,0 +1,45 @@
+# Procedural background music by mood (used when no file is given / found in library/music/<mood>/).
+# chords: scale degrees (1-based) of a minor/major scale; each chord lasts `bars_per_chord` bars of 4 beats.
+# layers: drone, pad, arp, bass, pulse (heartbeat-like), kick, hat, bells
+tense:
+  key: 45            # MIDI root (A2)
+  scale: minor
+  bpm: 76
+  chords: [1, 6, 4, 5]
+  bars_per_chord: 2
+  layers: {drone: 0.9, pad: 0.45, pulse: 0.6, hat: 0.12, bells: 0.15}
+mystery:
+  key: 50
+  scale: minor
+  bpm: 70
+  chords: [1, 4, 6, 5]
+  bars_per_chord: 2
+  layers: {pad: 0.6, bells: 0.35, drone: 0.4}
+sad:
+  key: 45
+  scale: minor
+  bpm: 66
+  chords: [1, 6, 3, 7]
+  bars_per_chord: 1
+  layers: {pad: 0.7, arp: 0.35}
+upbeat:
+  key: 48
+  scale: major
+  bpm: 112
+  chords: [1, 5, 6, 4]
+  bars_per_chord: 1
+  layers: {pad: 0.35, arp: 0.5, bass: 0.6, kick: 0.5, hat: 0.25}
+comedy:
+  key: 53
+  scale: major
+  bpm: 120
+  chords: [1, 4, 5, 1]
+  bars_per_chord: 1
+  layers: {arp: 0.55, bass: 0.6, hat: 0.2, bells: 0.2}
+action:
+  key: 40
+  scale: minor
+  bpm: 128
+  chords: [1, 1, 6, 7]
+  bars_per_chord: 1
+  layers: {drone: 0.5, bass: 0.7, kick: 0.7, hat: 0.3, arp: 0.35}

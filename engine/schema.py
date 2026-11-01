@@ -131,9 +131,10 @@ class Line(_Model):
 
 
 class SfxCue(_Model):
-    name: str
+    name: str                            # built-in generator or library/sfx/<name>.wav
     at: float = 0.0                      # seconds from shot start
     volume: float = 1.0
+    params: dict[str, Any] = Field(default_factory=dict)   # generator params, e.g. {"dur": 1.5}
 
 
 Transition = Literal["cut", "whip", "flash", "fade"]
@@ -146,6 +147,7 @@ class Shot(_Model):
     line: Optional[Line] = None
     duration: Optional[float] = None     # required if no line (else default_shot)
     sfx: list[SfxCue] = Field(default_factory=list)
+    auto_sfx: bool = True                # automatic sounds for this shot's transition, card, poll, props
     transition_out: Transition = "cut"
     background: Optional[str] = None     # overrides scene background
     blur: Optional[float] = None         # background blur (depth of field), px
@@ -186,9 +188,10 @@ class Ending(_Model):
 
 
 class Music(_Model):
-    mood: Optional[str] = None
-    file: Optional[str] = None
-    volume: float = 0.15
+    mood: Optional[str] = None           # tense | mystery | sad | upbeat | comedy | action (config/music.yaml)
+    file: Optional[str] = None           # own track (path relative to the project or repo)
+    volume: float = 0.15                 # 0.15 = default bed level (style audio.music.bed_db); 0.3 = +6 dB
+    enabled: bool = True
 
 
 class Screenplay(_Model):

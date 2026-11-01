@@ -12,6 +12,7 @@ from . import audio_mix, tts
 from .characters import resolve_character
 from .config import load_style, load_voices
 from .renderer import FrameRenderer
+from .soundtrack import build_soundtrack
 from .schema import Lighting, Scene, Screenplay, Shot, load_screenplay
 
 
@@ -158,9 +159,7 @@ def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds
 
     log(f"2/3 Audio mix ({tl.total:.2f}s)")
     sr = style["video"]["sample_rate"]
-    gain = style["audio"].get("voice_gain_db", 0.0)
-    clips = [(s.voice_start, s.voice_wav, gain) for s in tl.shots if s.voice_wav]
-    mix = audio_mix.mix_timeline(clips, tl.total, sr)
+    mix, audio_report = build_soundtrack(sp, tl, style, project_dir, log)
     mix_wav = project_dir / "audio" / "mix.wav"
     audio_mix.write_wav(mix_wav, mix, sr)
     mix_wav = normalize_audio(mix_wav, project_dir / "audio" / "mix_norm.wav", style)
@@ -173,5 +172,5 @@ def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds
         "total": tl.total,
         "shots": [{"scene": s.scene_id, "shot": s.index + 1, "start": round(s.start, 3), "end": round(s.end, 3),
                    "speaker": s.speaker, "words": [[w, round(a, 3), round(b, 3)] for w, a, b in s.words]}
-                  for s in tl.shots]}, indent=1), encoding="utf-8")
+                  for s in tl.shots], "audio": audio_report}, indent=1), encoding="utf-8")
     return {"video": final, "duration": tl.total, "srt": out_dir / "captions.srt"}

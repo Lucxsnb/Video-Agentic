@@ -10,7 +10,7 @@ Turns a story or prompt (any language) into a finished **vertical English video*
 | 2 | Rigged characters, poses, expressions, lip flap | ✅ |
 | 3 | SVG props/sets, camera, lighting, transitions, parallel render | ✅ |
 | 4 | Overlays (series badge + story clock, speaker tags, cards, poll, end card), tall body variant | ✅ |
-| 5 | Procedural SFX, music + ducking | ⏳ |
+| 5 | Procedural SFX (auto + manual), procedural/own music with ducking, stems | ✅ |
 | 6 | Agent: CLAUDE.md, slash commands, preview/validate | ⏳ |
 | 7 | End-to-end test | ⏳ |
 
@@ -45,7 +45,7 @@ Output in `projects/<slug>/output/`: `final.mp4`, `captions.srt`, `timeline.json
 
 1. `engine/schema.py` validates `screenplay.json`.
 2. `engine/tts.py` synthesizes each line (edge-tts → Piper → espeak-ng), caches it in `projects/<slug>/audio/`, and gets per-word timestamps (edge WordBoundary → faster-whisper → energy-based estimate).
-3. `engine/compose.py` sets each shot's length from its audio (+ `timing.pre_roll` / `breath_after`), mixes voice, normalizes to −14 LUFS with a true-peak limiter.
+3. `engine/compose.py` sets each shot's length from its audio (+ `timing.pre_roll` / `breath_after`); `engine/soundtrack.py` mixes voice + sound effects + ducked music; the mix is normalized to −14 LUFS with a true-peak limiter.
 4. `engine/renderer.py` records each frame's world (set → back props → actors → held props → lighting) while collecting anchors, applies the camera and transitions, then vignette → grain → captions, and pipes raw RGBA straight into FFmpeg.
 
 ### Characters (Phase 2)
@@ -77,6 +77,14 @@ Output in `projects/<slug>/output/`: `final.mp4`, `captions.srt`, `timeline.json
 - **End card** (`ending.type` poll / cliffhanger / cta): headline (default "THE MAJORITY DECIDES"), big `badge` pill (e.g. "DAY 14"), `cta`, all options, optional narration `line`; drawn over the last set, blurred and darkened.
 - **Phone insert**: set `phone_lockscreen` with `background_params` (`time`, `date`, `battery`...) + prop `notification` (`title`, `text`, `app`, `anim: pop`).
 - **Body variants**: `config/rigs/<name>.yaml` deep-merged over `rig.yaml` (with `pose_overrides`). `tall` = taller figure, long limbs, smaller head/eyes; used by `dark_miniseries` (`character.rig`), or per character with `"rig": "tall"`.
+
+### Audio (Phase 5)
+
+- **Sound effects** (`engine/sfx.py`, numpy only): whoosh, pop, hit, boom, ring, vibrate, notify, riser, flash, tick, heartbeat, footstep, door_slam, drop. A file `library/sfx/<name>.wav|mp3` (or `projects/<slug>/assets/sfx/`) overrides the generator with the same name.
+- **Manual cues** per shot: `"sfx": [{"name": "heartbeat", "at": 0.3, "volume": 0.8, "params": {"dur": 1.0}}]`.
+- **Automatic cues** (`audio.auto_sfx`): whoosh on whip, flash on flash cuts, impact on camera `punch`, pop on cards / new poll options / popping props, ring for `anim: ring`, notify for the `notification` prop, boom under the end card. `"auto_sfx": false` turns them off for a shot.
+- **Music**: `"music": {"mood": "tense"}` → procedural bed from `config/music.yaml` (tense, mystery, sad, upbeat, comedy, action), or your own track (`"file": "..."`, or any file in `library/music/<mood>/`), looped and faded. Level calibrated to the voice (`bed_db`), ducked under speech (`duck_db`). `dark_miniseries` defaults to `tense`.
+- Stems are saved in `projects/<slug>/audio/stems/` (voice, sfx, music); the cue list is in `output/timeline.json`. Final mix normalized to −14 LUFS with a true-peak limiter.
 
 All visual/timing values live in `config/style.yaml` (+ `config/presets/*.yaml`); character rig in `config/rig.yaml`, `poses.yaml`, `expressions.yaml`; voices in `config/voices.yaml`.
 
