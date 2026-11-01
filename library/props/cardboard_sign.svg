@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 300" data-height="0.17" data-anchor="0.5,0.86" data-wrap="14" data-text-width="370" data-font-size="46">
+  <path d="M10 18 L120 8 L230 14 L330 6 L410 16 L404 150 L412 290 L300 284 L190 292 L80 286 L8 292 L14 150 Z"
+        fill="#C9A26B" stroke="#1d1d22" stroke-width="{{ow}}" stroke-linejoin="round"/>
+  <path d="M14 150 L404 150" stroke="#A9834F" stroke-width="5" opacity="0.6"/>
+  <path d="M120 10 L118 40 M330 8 L332 34" stroke="#A9834F" stroke-width="4" opacity="0.7"/>
+  <g font-family="Permanent Marker" font-size="{{fs}}" fill="#22242B" text-anchor="middle">
+    <text x="210" y="78">{{line1}}</text>
+    <text x="210" y="134">{{line2}}</text>
+    <text x="210" y="190">{{line3}}</text>
+    <text x="210" y="246">{{line4}}</text>
+  </g>
+</svg>

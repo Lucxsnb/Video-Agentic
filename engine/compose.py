@@ -12,7 +12,7 @@ from . import audio_mix, tts
 from .characters import resolve_character
 from .config import load_style, load_voices
 from .renderer import FrameRenderer
-from .schema import Screenplay, Shot, load_screenplay
+from .schema import Scene, Screenplay, Shot, load_screenplay
 
 
 @dataclass
@@ -29,6 +29,7 @@ class ShotTiming:
     words: list[tuple[str, float, float]] = field(default_factory=list)  # absolute times
     highlight: list[str] = field(default_factory=list)
     speaker: str | None = None
+    scene: Scene | None = None
 
     @property
     def duration(self) -> float:
@@ -56,7 +57,7 @@ def build_timeline(sp: Screenplay, project_dir: Path, style: dict, voices_cfg: d
     used_backends = set()
     for scene in sp.scenes:
         for i, shot in enumerate(scene.shots):
-            st = ShotTiming(scene.id, i, shot, shot.background or scene.background, t, t)
+            st = ShotTiming(scene.id, i, shot, shot.background or scene.background, t, t, scene=scene)
             dur = shot.duration or 0.0
             if shot.line:
                 ln = shot.line
@@ -116,7 +117,7 @@ def measure_lufs(path: Path) -> float | None:
 
 
 def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds: float | None = None,
-               log=print) -> dict:
+               log=print, workers: int = 0) -> dict:
     project_dir = Path(project_dir)
     sp = load_screenplay(project_dir / "screenplay.json")
     sp.characters = [resolve_character(c, project_dir) for c in sp.characters]
@@ -139,7 +140,7 @@ def make_video(project_dir: Path, backends: list[str] | None = None, max_seconds
 
     log("3/3 Render video")
     r = FrameRenderer(tl, style, project_dir, sp.characters)
-    final = r.render(mix_wav, out_dir / "final.mp4", None, max_seconds)
+    final = r.render(mix_wav, out_dir / "final.mp4", None, max_seconds, workers)
     (out_dir / "captions.srt").write_text(r.captions.to_srt(), encoding="utf-8")
     (out_dir / "timeline.json").write_text(json.dumps({
         "total": tl.total,

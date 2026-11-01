@@ -1,0 +1,14 @@
+# Moody night-shift mini-series look: darker, blurred sets (depth of field), heavy vignette and grain,
+# smaller captions in the middle-lower area.
+background:
+  blur: 4
+vignette:
+  strength: 0.82
+  inner: 0.28
+grain:
+  amount: 0.11
+caption:
+  size: 84
+  center_y: 0.64
+  stroke_width: 13
+  max_words_per_page: 3

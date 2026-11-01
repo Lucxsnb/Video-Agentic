@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#121826"/><stop offset="1" stop-color="#22304A"/></linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2E3440"/><stop offset="1" stop-color="#171A21"/></linearGradient>
+    <pattern id="bricks" width="160" height="80" patternUnits="userSpaceOnUse">
+      <rect width="160" height="80" fill="#3B4660"/>
+      <path d="M0 0 H160 M0 40 H160 M0 0 V40 M80 0 V40 M40 40 V80 M120 40 V80" stroke="#252D40" stroke-width="5"/>
+    </pattern>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#sky)"/>
+  <rect y="160" width="1080" height="1180" fill="url(#bricks)"/>
+  <!-- metal door -->
+  <rect x="560" y="560" width="380" height="780" fill="#4A5566" stroke="#1d1d22" stroke-width="10"/>
+  <rect x="600" y="610" width="300" height="300" fill="#556275" stroke="#1d1d22" stroke-width="5"/>
+  <rect x="600" y="960" width="300" height="320" fill="#556275" stroke="#1d1d22" stroke-width="5"/>
+  <rect x="880" y="940" width="26" height="90" rx="8" fill="#9BA3AD" stroke="#1d1d22" stroke-width="5"/>
+  <rect x="640" y="720" width="220" height="70" fill="#F2EDE1" stroke="#1d1d22" stroke-width="5"/>
+  <text x="750" y="766" font-family="Montserrat" font-weight="900" font-size="25" fill="#C8432B" text-anchor="middle">KEEP CLOSED</text>
+  <!-- dumpster -->
+  <path d="M40 1080 L420 1080 L400 1340 L60 1340 Z" fill="#2F6B4A" stroke="#1d1d22" stroke-width="9"/>
+  <path d="M28 1040 L432 1040 L420 1084 L40 1084 Z" fill="#27573D" stroke="#1d1d22" stroke-width="9"/>
+  <rect x="120" y="1150" width="220" height="16" fill="#1d1d22" opacity="0.35"/>
+  <!-- pipe + lamp -->
+  <rect x="470" y="160" width="24" height="1180" fill="#5E6670" stroke="#1d1d22" stroke-width="6"/>
+  <path d="M700 420 h100 l-20 40 h-60 z" fill="#30333A" stroke="#1d1d22" stroke-width="6"/>
+  <ellipse cx="750" cy="462" rx="30" ry="8" fill="#FFE7A8"/>
+  <rect x="0" y="1340" width="1080" height="580" fill="url(#ground)"/>
+  <path d="M0 1340 H1080" stroke="#1d1d22" stroke-width="8"/>
+  <ellipse cx="300" cy="1640" rx="200" ry="30" fill="#6D86B8" opacity="0.25"/>
+  <ellipse cx="820" cy="1760" rx="140" ry="20" fill="#6D86B8" opacity="0.2"/>
+</svg>

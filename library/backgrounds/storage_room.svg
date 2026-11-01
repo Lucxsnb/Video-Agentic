@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A3833"/><stop offset="1" stop-color="#4C4941"/></linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55524B"/><stop offset="1" stop-color="#2E2C28"/></linearGradient>
+    <pattern id="blocks" width="240" height="120" patternUnits="userSpaceOnUse">
+      <path d="M0 0 H240 M0 60 H240 M0 0 V60 M120 60 V120" stroke="#2A2925" stroke-width="4" opacity="0.6"/>
+    </pattern>
+    <g id="box">
+      <rect x="0" y="0" width="150" height="120" rx="4" fill="#A97E4C" stroke="#1d1d22" stroke-width="6"/>
+      <rect x="62" y="0" width="26" height="120" fill="#C9AE7E" stroke="#1d1d22" stroke-width="3"/>
+      <rect x="104" y="4" width="42" height="112" fill="#000" opacity="0.15"/>
+    </g>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#wall)"/>
+  <rect width="1080" height="1300" fill="url(#blocks)"/>
+  <rect y="980" width="1080" height="40" fill="#2E8B57" opacity="0.7"/>
+  <!-- rack left -->
+  <g stroke="#1d1d22" stroke-width="7">
+    <rect x="30" y="300" width="22" height="1000" fill="#5E6670"/><rect x="420" y="300" width="22" height="1000" fill="#5E6670"/>
+    <rect x="20" y="560" width="440" height="22" fill="#7A838C"/><rect x="20" y="860" width="440" height="22" fill="#7A838C"/>
+    <rect x="20" y="1160" width="440" height="22" fill="#7A838C"/>
+  </g>
+  <use href="#box" x="70" y="440"/><use href="#box" x="230" y="440"/>
+  <use href="#box" x="90" y="740"/><use href="#box" x="250" y="740"/><use href="#box" x="170" y="620"/>
+  <use href="#box" x="80" y="1040"/>
+  <!-- rack right -->
+  <g stroke="#1d1d22" stroke-width="7">
+    <rect x="650" y="300" width="22" height="1000" fill="#5E6670"/><rect x="1040" y="300" width="22" height="1000" fill="#5E6670"/>
+    <rect x="640" y="560" width="450" height="22" fill="#7A838C"/><rect x="640" y="860" width="450" height="22" fill="#7A838C"/>
+    <rect x="640" y="1160" width="450" height="22" fill="#7A838C"/>
+  </g>
+  <use href="#box" x="700" y="440"/><use href="#box" x="860" y="440"/><use href="#box" x="780" y="320"/>
+  <use href="#box" x="880" y="740"/><use href="#box" x="720" y="1040"/><use href="#box" x="880" y="1040"/>
+  <!-- lamp -->
+  <path d="M540 0 V140" stroke="#1d1d22" stroke-width="6"/>
+  <path d="M480 180 L600 180 L570 140 L510 140 Z" fill="#30333A" stroke="#1d1d22" stroke-width="6"/>
+  <ellipse cx="540" cy="184" rx="40" ry="10" fill="#FFE7A8"/>
+  <rect x="0" y="1300" width="1080" height="620" fill="url(#floor)"/>
+  <path d="M0 1300 H1080" stroke="#1d1d22" stroke-width="8"/>
+  <path d="M120 1600 q60 -10 120 6 q40 14 -20 24 q-80 10 -100 -30z" fill="#1d1d22" opacity="0.25"/>
+</svg>

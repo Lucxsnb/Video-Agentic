@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 90" data-height="0.04" data-anchor="0.3,0.5" data-tip="0.98,0.5" data-tip-angle="0">
+  <g stroke="#1d1d22" stroke-width="{{ow}}" stroke-linejoin="round">
+    <rect x="8" y="26" width="170" height="38" rx="12" fill="#2C2F38"/>
+    <path d="M176 22 L232 8 L272 8 L272 82 L232 82 L176 68 Z" fill="{{color|#E9C23A}}"/>
+    <rect x="262" y="10" width="12" height="70" rx="4" fill="#FFF6C9" stroke-width="{{ow2}}"/>
+  </g>
+  <g fill="#1d1d22" opacity="0.5"><rect x="40" y="34" width="6" height="22"/><rect x="58" y="34" width="6" height="22"/><rect x="76" y="34" width="6" height="22"/></g>
+  <rect x="110" y="30" width="22" height="10" rx="3" fill="#C8432B"/>
+</svg>

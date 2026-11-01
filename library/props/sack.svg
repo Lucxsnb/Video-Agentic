@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 230" data-height="0.12" data-anchor="0.5,1.0">
+  <path d="M22 20 Q85 4 148 20 L160 200 Q85 226 10 200 Z" fill="#F1EEE6" stroke="#1d1d22" stroke-width="{{ow}}" stroke-linejoin="round"/>
+  <path d="M18 70 Q85 58 152 70 L154 112 Q85 100 16 112 Z" fill="{{color|#C8432B}}"/>
+  <text x="85" y="98" font-family="Montserrat" font-weight="900" font-size="26" fill="#ffffff" text-anchor="middle">{{label|RICE}}</text>
+  <text x="85" y="150" font-family="Montserrat" font-weight="800" font-size="16" fill="#8A8A8A" text-anchor="middle">{{weight|5 kg}}</text>
+  <path d="M120 24 L150 30 L160 200 L128 210 Z" fill="#000" opacity="0.10"/>
+</svg>

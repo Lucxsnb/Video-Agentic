@@ -8,7 +8,7 @@ Turns a story or prompt (any language) into a finished **vertical English video*
 |---|---|---|
 | 1 | Background + kinetic captions + TTS with word timestamps + mux | ✅ |
 | 2 | Rigged characters, poses, expressions, lip flap | ✅ |
-| 3 | SVG props/sets, camera, transitions | ⏳ |
+| 3 | SVG props/sets, camera, lighting, transitions, parallel render | ✅ |
 | 4 | Overlays (series badge, timer, speaker tag, poll), grain/vignette polish | ⏳ |
 | 5 | Procedural SFX, music + ducking | ⏳ |
 | 6 | Agent: CLAUDE.md, slash commands, preview/validate | ⏳ |
@@ -34,6 +34,7 @@ pip install -r requirements.txt
 python scripts/make_video.py projects/phase1-test
 python scripts/make_video.py projects/phase1-test --tts espeak      # force a backend
 python scripts/make_video.py projects/phase1-test --max-seconds 5   # quick partial render
+python scripts/make_video.py projects/phase3-test --workers 1       # disable parallel rendering
 python scripts/character_sheet.py delivery_guy store_manager --mode poses --out sheet.png   # or --mode expressions
 python -m unittest discover tests
 ```
@@ -45,7 +46,7 @@ Output in `projects/<slug>/output/`: `final.mp4`, `captions.srt`, `timeline.json
 1. `engine/schema.py` validates `screenplay.json`.
 2. `engine/tts.py` synthesizes each line (edge-tts → Piper → espeak-ng), caches it in `projects/<slug>/audio/`, and gets per-word timestamps (edge WordBoundary → faster-whisper → energy-based estimate).
 3. `engine/compose.py` sets each shot's length from its audio (+ `timing.pre_roll` / `breath_after`), mixes voice, normalizes to −14 LUFS with a true-peak limiter.
-4. `engine/renderer.py` draws each frame with skia (background → vignette → grain → captions) and pipes raw RGBA straight into FFmpeg.
+4. `engine/renderer.py` records each frame's world (set → back props → actors → held props → lighting) while collecting anchors, applies the camera and transitions, then vignette → grain → captions, and pipes raw RGBA straight into FFmpeg.
 
 ### Characters (Phase 2)
 
@@ -56,6 +57,17 @@ Output in `projects/<slug>/output/`: `final.mp4`, `captions.srt`, `timeline.json
 - Automatic: blinking, breathing, lip flap from the speaker's voice loudness, head bob and gestures while talking. `facing` moves the eyes, `flip` mirrors.
 - Each draw returns anchors (`hand_l`, `hand_r`, `head`, `head_top`, `mouth`, `chest`, `feet`) used by props in Phase 3.
 
+### Props, sets, camera, lighting, transitions (Phase 3)
+
+- **Props**: SVGs in `library/props/` (phone, phone_incoming_call, cardboard_sign, hammer, key, flashlight, cardboard_box, sack, bottle, sign). Placeholders `{{key|default}}` are filled from `params`; a `text` param auto-wraps into `{{line1..N}}` with auto-fit font size. `attach_to: "courier.hand_r"` keeps a prop in a hand; `layer: back` puts it behind actors; `anim`: ring, bob, pulse, swing, pop, drop.
+- **Sets**: SVG backgrounds in `library/backgrounds/` (supermarket_aisle, storage_room, back_alley) or YAML layer sets. `blur` (scene/shot) gives depth of field.
+- **Camera**: `zoom_in/zoom_out/pan_*/static`, `from`/`to` zoom, `target` (`"manager.head"`, `"phone1"`, `"flashlight1.tip"`) with `target_to` rack, `frame_y`, `shake`, `punch` (impact), `rotate` (dutch angle). Never shows outside the set.
+- **Lighting** (scene/shot): `darkness` + `lights` (`spot` or flashlight `cone` from `"<prop>.tip"`), with flicker.
+- **Transitions**: `transition_out`: cut, whip (motion-blur pan), flash, fade.
+- `caption_y` per shot moves captions off a sign or a face.
+- Presets: `miniseries` (bright) and `dark_miniseries` (moody night look: blurred sets, heavy vignette/grain, mid-low captions).
+- Rendering runs in parallel processes (`render.workers`, default = CPU cores) and joins segments losslessly.
+
 All visual/timing values live in `config/style.yaml` (+ `config/presets/*.yaml`); character rig in `config/rig.yaml`, `poses.yaml`, `expressions.yaml`; voices in `config/voices.yaml`.
 
-Fonts: Montserrat (SIL Open Font License, `library/fonts/OFL.txt`).
+Fonts: Montserrat (SIL Open Font License, `library/fonts/OFL.txt`), Permanent Marker (Apache 2.0). They are registered with fontconfig automatically for SVG text (Linux/macOS).

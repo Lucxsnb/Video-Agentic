@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 70 200" data-height="0.085" data-anchor="0.5,1.0">
+  <g stroke="#1d1d22" stroke-width="{{ow}}" stroke-linejoin="round">
+    <path d="M24 30 L46 30 L46 52 Q62 64 62 86 L62 186 Q62 194 54 194 L16 194 Q8 194 8 186 L8 86 Q8 64 24 52 Z" fill="{{liquid|#E9C23A}}"/>
+    <rect x="22" y="8" width="26" height="24" rx="4" fill="{{cap|#2E8B57}}"/>
+    <rect x="8" y="104" width="54" height="50" fill="{{label_color|#F2EDE1}}" stroke-width="{{ow2}}"/>
+  </g>
+  <rect x="44" y="60" width="12" height="128" fill="#000" opacity="0.10"/>
+</svg>

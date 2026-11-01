@@ -29,6 +29,7 @@ class Page:
     start: float
     end: float
     lines: list[list[int]] = field(default_factory=list)  # word indexes per line
+    center_y: float | None = None
 
 
 def _key(s: str) -> str:
@@ -67,7 +68,7 @@ class CaptionTrack:
         return s.upper() if self.cfg.get("uppercase", True) else s
 
     def add_line(self, words: list[tuple[str, float, float]], highlight: list[str], line_end: float,
-                 shot_end: float) -> None:
+                 shot_end: float, center_y: float | None = None) -> None:
         """words: (token, abs_start, abs_end)."""
         hl = {_key(w) for phrase in highlight for w in phrase.split()}
         cw = [CapWord(self.display_text(t), s, e, _key(t) in hl) for t, s, e in words]
@@ -88,7 +89,7 @@ class CaptionTrack:
         for i, g in enumerate(groups):
             lead = self.cfg.get("lead", 0.03)
             end = groups[i + 1][0].start - lead if i + 1 < len(groups) else min(line_end + hold, shot_end)
-            page = Page(g, g[0].start - lead, end)
+            page = Page(g, g[0].start - lead, end, center_y=center_y)
             page.lines = self._layout(g)
             self.pages.append(page)
 
@@ -138,7 +139,7 @@ class CaptionTrack:
         metrics = self.font.getMetrics()
         cap_h = metrics.fCapHeight or size * 0.7
         block_h = line_h * len(page.lines)
-        top = cfg.get("center_y", 0.7) * self.H - block_h / 2
+        top = (page.center_y if page.center_y is not None else cfg.get("center_y", 0.7)) * self.H - block_h / 2
 
         fill = skia.Paint(AntiAlias=True)
         stroke = skia.Paint(AntiAlias=True, Style=skia.Paint.kStroke_Style,

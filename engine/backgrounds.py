@@ -6,7 +6,7 @@ A background lives in library/backgrounds/<name>.yaml (or projects/<slug>/assets
       - {rect: [0, 0, 1, 0.64], color: "#3E8E6A", gradient: "#2F6F52"}   # x0,y0,x1,y1 as fractions
       - {rect: [0, 0.36, 1, 0.44], color: "#F2EDE1"}
       - {hline: 0.64, color: "#1d1d22", width: 8}
-SVG backgrounds are added in Phase 3.
+or as an SVG (library/backgrounds/<name>.svg, viewBox 0 0 1080 1920). SVG wins if both exist.
 """
 from __future__ import annotations
 
@@ -27,15 +27,39 @@ def _color(hex_: str, alpha: float = 1.0) -> int:
 
 
 def find_background(name: str, project_dir: Path | None = None) -> dict:
+    """Returns a layer spec dict, or {"svg": Path} for SVG backgrounds."""
     dirs = []
     if project_dir:
         dirs.append(project_dir / "assets" / "backgrounds")
     dirs.append(ROOT / "library" / "backgrounds")
     for d in dirs:
+        svg = d / f"{name}.svg"
+        if svg.exists():
+            return {"svg": svg}
         p = d / f"{name}.yaml"
         if p.exists():
             return yaml.safe_load(p.read_text(encoding="utf-8"))
     return PLAIN
+
+
+def background_image(spec: dict, w: int, h: int, scale: float = 1.0, blur: float = 0.0) -> skia.Image:
+    """Render a background at `scale` x frame size (extra pixels for camera close-ups), optionally blurred
+    (depth of field; `blur` is in frame pixels)."""
+    if "svg" in spec:
+        from .fonts import ensure_fonts
+        from .props import rasterize
+        ensure_fonts()
+        img = rasterize(Path(spec["svg"]).read_text(encoding="utf-8"), int(h * scale), int(w * scale))
+    else:
+        img = render_background(spec, w, h, scale)
+    if blur > 0:
+        surf = skia.Surface(img.width(), img.height())
+        c = surf.getCanvas()
+        sigma = blur * scale
+        c.drawImage(img, 0, 0, skia.SamplingOptions(),
+                    skia.Paint(ImageFilter=skia.ImageFilters.Blur(sigma, sigma, skia.TileMode.kClamp)))
+        img = surf.makeImageSnapshot()
+    return img
 
 
 def render_background(spec: dict, w: int, h: int, scale: float = 1.0) -> skia.Image:
@@ -78,7 +102,7 @@ class Atmosphere:
         if self.grain_on:
             rng = np.random.default_rng(seed)
             amount = float(g.get("amount", 0.07))
-            gw, gh = w // 2, h // 2  # half-res noise, upscaled -> softer, film-like grain
+            gw, gh = w, h
             for _ in range(int(g.get("variants", 6))):
                 n = rng.integers(0, 256, size=(gh, gw), dtype=np.uint8)
                 arr = np.empty((gh, gw, 4), dtype=np.uint8)
@@ -87,6 +111,7 @@ class Atmosphere:
                 self.grain.append(skia.Image.fromarray(arr, colorType=skia.kRGBA_8888_ColorType))
         self.vignette_on = v.get("enabled", True)
         self.vig_paint = None
+        self.vig_img = None
         if self.vignette_on:
             strength = float(v.get("strength", 0.55))
             inner = float(v.get("inner", 0.45))
@@ -97,12 +122,18 @@ class Atmosphere:
                 [0.0, inner, 1.0]))
 
     def draw_vignette(self, c: skia.Canvas) -> None:
-        if self.vig_paint:
-            c.drawRect(skia.Rect.MakeWH(self.w, self.h), self.vig_paint)
+        if not self.vig_paint:
+            return
+        if self.vig_img is None:   # pre-render once (a gradient per frame is slow)
+            s = skia.Surface(self.w, self.h)
+            s.getCanvas().clear(skia.ColorTRANSPARENT)
+            s.getCanvas().drawRect(skia.Rect.MakeWH(self.w, self.h), self.vig_paint)
+            self.vig_img = s.makeImageSnapshot()
+        c.drawImage(self.vig_img, 0, 0)
 
     def draw_grain(self, c: skia.Canvas, t: float) -> None:
         if not self.grain:
             return
         img = self.grain[int(t * self.grain_fps) % len(self.grain)]
         p = skia.Paint(BlendMode=skia.BlendMode.kOverlay)
-        c.drawImageRect(img, skia.Rect.MakeWH(self.w, self.h), skia.SamplingOptions(), p)
+        c.drawImage(img, 0, 0, skia.SamplingOptions(), p)

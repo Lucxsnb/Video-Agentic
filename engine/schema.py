@@ -41,11 +41,18 @@ class Character(_Model):
 
 class Camera(_Model):
     type: Literal["static", "zoom_in", "zoom_out", "pan_left", "pan_right", "pan_up", "pan_down"] = "static"
-    from_: float = Field(1.0, alias="from")
-    to: float = 1.0
-    shake: float = 0.0                   # 0..1
-    focus_x: float = 0.5
+    from_: float = Field(1.0, alias="from")   # zoom at shot start (1 = full frame, 2 = close-up)
+    to: Optional[float] = None                # zoom at shot end (default = from)
+    shake: float = 0.0                   # continuous handheld shake 0..1
+    punch: float = 0.0                   # impact shake at shot start, decays (0..1)
+    rotate: float = 0.0                  # dutch angle (deg)
+    focus_x: float = 0.5                 # world point to look at (fractions), used when no target
     focus_y: float = 0.5
+    target: Optional[str] = None         # "<actor>" / "<actor>.<anchor>" / "<prop_id>" (head, chest, hand_r, tip...)
+    target_to: Optional[str] = None      # rack to another target during the shot
+    frame_y: Optional[float] = None      # where the target lands on screen (fraction of height)
+    pan: float = 0.12                    # pan distance for pan_* types (fraction of frame)
+    ease: Literal["linear", "in", "out", "inout"] = "inout"
 
 
 class Actor(_Model):
@@ -61,12 +68,38 @@ class Actor(_Model):
 
 class PropPlacement(_Model):
     svg: str
-    x: float = 0.5
+    id: Optional[str] = None             # name for camera targets / light sources (default = svg)
+    x: float = 0.5                       # world position of the prop's anchor (fractions)
     y: float = 0.5
     scale: float = 1.0
     rotation: float = 0.0
+    flip: bool = False
+    opacity: float = 1.0
     params: dict[str, Any] = Field(default_factory=dict)
-    attach_to: Optional[str] = None      # "<actor_id>.hand_l" etc.
+    attach_to: Optional[str] = None      # "<actor_id>.hand_l" etc. (x/y ignored, dx/dy offset)
+    dx: float = 0.0                      # offset in fractions of frame height
+    dy: float = 0.0
+    layer: Literal["back", "front"] = "front"   # back = behind actors
+    anim: Optional[Literal["ring", "bob", "pulse", "swing", "pop", "drop"]] = None
+
+
+class Light(_Model):
+    type: Literal["spot", "cone"] = "spot"
+    x: float = 0.5                       # world position (fractions) when no source
+    y: float = 0.4
+    source: Optional[str] = None         # "<prop_id>.tip", "<actor>.hand_r", ...
+    radius: float = 0.35                 # spot radius / cone length (fraction of frame height)
+    angle: Optional[float] = None        # cone direction (deg, 0 = right, 90 = down); default from prop
+    spread: float = 34.0                 # cone width (deg)
+    intensity: float = 1.0
+    color: Optional[str] = None          # glow tint
+    flicker: float = 0.0
+
+
+class Lighting(_Model):
+    darkness: float = 0.0                # 0 = normal, 0.9 = almost black outside the lights
+    color: Optional[str] = None
+    lights: list[Light] = Field(default_factory=list)
 
 
 class Line(_Model):
@@ -96,11 +129,16 @@ class Shot(_Model):
     sfx: list[SfxCue] = Field(default_factory=list)
     transition_out: Transition = "cut"
     background: Optional[str] = None     # overrides scene background
+    blur: Optional[float] = None         # background blur (depth of field), px
+    lighting: Optional[Lighting] = None  # overrides scene lighting
+    caption_y: Optional[float] = None    # move captions for this shot (e.g. off a sign or face)
 
 
 class Scene(_Model):
     id: str
     background: str = "plain"
+    blur: Optional[float] = None
+    lighting: Optional[Lighting] = None
     shots: list[Shot]
 
 

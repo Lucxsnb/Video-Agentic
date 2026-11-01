@@ -12,6 +12,9 @@ video:
   audio_bitrate: 192k
   sample_rate: 48000
 
+render:
+  workers: 0               # parallel render processes (0 = number of CPU cores, 1 = off)
+
 palette:
   outline: "#1d1d22"
   highlight: "#F5A623"
@@ -75,3 +78,28 @@ tts:
   rate: "+6%"                       # edge-tts speaking rate
   pitch: "+0Hz"
   align: auto                       # auto | edge | whisper | estimate
+
+background:
+  render_scale: 1.5        # backgrounds rendered larger than the frame for sharper close-ups
+  blur: 0                  # default depth-of-field blur (px); scenes/shots can override
+
+props:
+  outline_px: 8            # constant outline thickness of SVG props, in output pixels
+  supersample: 2.0         # rasterize props larger so camera zoom stays sharp
+
+camera:
+  shake_amp: 0.012         # x frame width, for shake = 1
+  punch_amp: 0.04          # x frame width, for punch = 1
+  punch_decay: 0.22        # s
+  target_frame_y: 0.42     # where a camera target lands on screen (fraction of height)
+
+transitions:
+  whip:  {duration: 0.26, blur: 70}
+  flash: {duration: 0.18, color: "#FFFFFF"}
+  fade:  {duration: 0.40, color: "#000000"}
+
+lighting:
+  color: "#04060B"         # darkness tint
+  glow: "#FFE7A8"          # warm light tint
+  glow_alpha: 0.30
+  edge_blur: 18            # px softness of light edges

@@ -19,9 +19,10 @@ def main(
     project: Path = typer.Argument(..., help="Project folder, e.g. projects/my-video"),
     tts: str = typer.Option("", help="Comma-separated TTS backends to try, e.g. 'edge' or 'espeak'"),
     max_seconds: float = typer.Option(0, help="Render only the first N seconds (0 = all)"),
+    workers: int = typer.Option(0, help="Parallel render processes (0 = all CPU cores, 1 = off)"),
 ):
     backends = [b.strip() for b in tts.split(",") if b.strip()] or None
-    res = make_video(project, backends=backends, max_seconds=max_seconds or None)
+    res = make_video(project, backends=backends, max_seconds=max_seconds or None, workers=workers)
     typer.echo(f"\nDone: {res['video']}  ({res['duration']:.2f}s)\nSRT:  {res['srt']}")
 
 
